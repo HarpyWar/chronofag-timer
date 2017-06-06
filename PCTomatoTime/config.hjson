@@ -1,0 +1,60 @@
+﻿{
+  # pomodoros and breaks
+  #  (time in minutes)
+  "rounds": [
+    {
+      "type": "pomodoro"
+      "time": 5,
+    },
+    {
+      "type": "break"
+      "time": 5,
+    },
+    {
+      "type": "pomodoro"
+      "time": 5,
+    },
+    {
+      "type": "break"
+      "time": 5,
+    },
+    {
+      "type": "pomodoro"
+      "time": 5,
+    },
+    {
+      "type": "break"
+      "time": 5,
+    },
+    {
+      "type": "pomodoro"
+      "time": 5,
+    },
+    {
+      "type": "break"
+      "time": 5,
+    }
+  ],
+
+  "style": {
+    "pomodoro": {
+      # where show timer
+      #  (top-right | top-left | bottom-left | bottom-right | bottom | top | left | right)
+      "position": "top-left", 
+      # additional mouse area near position, px
+      "mousearea": "10",
+      "background": "#dc143c",
+      "foreground": "#ffffff",
+    },
+    "break": {
+      "background": "#8f76a8",
+      "foreground": "#ffffff",
+    },
+    "counter": {
+      "foreground": "#ffffff",
+    },
+  },
+
+  # lock mouse and keyboard during a break (true | false)
+  "lockcontrols": true 
+}
