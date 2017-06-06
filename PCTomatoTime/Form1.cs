@@ -1,5 +1,4 @@
-﻿using Formo;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,6 +20,11 @@ namespace PCTomatoTime
         /// Overall pomodoros for the current day
         /// </summary>
         int pomodoroCounter = 0;
+
+        /// <summary>
+        /// Current alert, show if not null
+        /// </summary>
+        Alert Alert = null;
 
         Config config;
 
@@ -89,7 +93,10 @@ namespace PCTomatoTime
                 }
                 else
                 {
-                    this.FadeOut();
+                    if (Alert == null)
+                    {
+                        this.FadeOut();
+                    }
                 }
             }
         }
@@ -115,10 +122,14 @@ namespace PCTomatoTime
 
         private void _timeUnitTimer_Elapsed(object sender, EventArgs e)
         {
+            // check for round finish
             if (counter >= CurrentTimeUnit.CounterLimit)
             {
                 // reset counter
-                counter = 0; 
+                counter = 0;
+                // reset alert
+                Alert = null;
+
                 // increase round
                 currentRound++;
                 if (currentRound >= config.Times.Count)
@@ -139,6 +150,26 @@ namespace PCTomatoTime
 
             counter++;
 
+            // alerts
+            foreach(var alert in config.Alerts)
+            {
+                if (alert.Remain == CurrentTimeUnit.CounterLimit - counter)
+                {
+                    this.FadeIn();
+                    alert.Reset();
+                    Alert = alert;
+                    Helper.PlaySound(alert.Sound);
+                }
+            }
+            if (Alert != null)
+            {
+                Alert.Elapsed++;
+                if (Alert.Elapsed > Alert.Duration)
+                {
+                    Alert = null;
+                }
+            }
+
             // set label position
             if (CurrentTimeUnit is Break)
             {
@@ -153,6 +184,8 @@ namespace PCTomatoTime
 
         private void startBreak()
         {
+            Helper.PlaySound(config.BreakSound);
+
             // update form size equal to screen size
             this.Width = Screen.PrimaryScreen.Bounds.Width;
             this.Height = Screen.PrimaryScreen.Bounds.Height;
@@ -177,6 +210,8 @@ namespace PCTomatoTime
 
         private void startPomodoro()
         {
+            Helper.PlaySound(config.PomodoroSound);
+
             this.FadeOut();
 
             this.Width = Screen.PrimaryScreen.Bounds.Width / 8;

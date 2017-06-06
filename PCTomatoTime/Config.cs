@@ -17,7 +17,7 @@ namespace PCTomatoTime
             foreach (dynamic item in jobj["rounds"])
             {
                 TimeUnit unit;
-                int limit = item["time"] /** 60*/; // make seconds as minutes
+                int limit = item["time"];
                 if (item["type"] == "pomodoro")
                 {
                     unit = new Pomodoro(limit);
@@ -29,24 +29,54 @@ namespace PCTomatoTime
                 Times.Add(unit);
             }
 
-            // style
-            Face.PomodoroBackground = FromHex(jobj["style"]["pomodoro"]["background"]);
-            Face.PomodoroForeground = FromHex(jobj["style"]["pomodoro"]["foreground"]);
-            Face.BreakBackground = FromHex(jobj["style"]["break"]["background"]);
-            Face.BreakForeground = FromHex(jobj["style"]["break"]["foreground"]);
-            Face.CounterForeground = FromHex(jobj["style"]["counter"]["foreground"]);
+            // alerts
+            Alerts = new List<Alert>();
+            if (jobj["alerts"] != null)
+            {
+                foreach (dynamic item in jobj["alerts"])
+                {
+                    Alert alert = new Alert() {
+                        Remain = item["remain"],
+                        Duration = item["duration"],
+                        Sound = item["sound"]
+                    };
+                    Alerts.Add(alert);
+                }
+            }
+
+            // colors
+            Face.PomodoroBackground = FromHex(jobj["pomodoro"]["background"]);
+            Face.PomodoroForeground = FromHex(jobj["pomodoro"]["foreground"]);
+            Face.BreakBackground = FromHex(jobj["break"]["background"]);
+            Face.BreakForeground = FromHex(jobj["break"]["foreground"]);
+            Face.CounterForeground = FromHex(jobj["counter"]["foreground"]);
 
             // position
-            Position = jobj["style"]["pomodoro"]["position"];
-            MouseArea = jobj["style"]["pomodoro"]["mousearea"];
+            Position = jobj["pomodoro"]["position"];
+            MouseArea = jobj["pomodoro"]["mousearea"];
+
+            // sounds
+            PomodoroSound = jobj["pomodoro"]["sound"];
+            BreakSound = jobj["break"]["sound"];
         }
 
         public List<TimeUnit> Times { get; private set; }
+        public List<Alert> Alerts { get; private set; }
 
         public Style Face;
 
         public string Position;
         public int MouseArea;
+
+        /// <summary>
+        /// File to play when pomodoro start
+        /// </summary>
+        public string PomodoroSound;
+        /// <summary>
+        /// File to play when break start
+        /// </summary>
+        public string BreakSound;
+
 
         public struct Style
         {
