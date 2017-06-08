@@ -3,34 +3,42 @@
   #  (time in minutes)
   "rounds": [
     {
-      "type": "pomodoro"
-      "time": 25,
+      "title": "Pomodoro #1",
+      "type": "work"
+      "time": 5,
     },
     {
+      "title": "Break #1",
       "type": "break"
       "time": 5,
     },
     {
-      "type": "pomodoro"
+      "title": "Pomodoro #2",
+      "type": "work"
       "time": 5,
     },
     {
+      "title": "Break #2",
       "type": "break"
       "time": 5,
     },
     {
-      "type": "pomodoro"
+      "title": "Pomodoro #3",
+      "type": "work"
       "time": 5,
     },
     {
+      "title": "Break #3",
       "type": "break"
       "time": 5,
     },
     {
-      "type": "pomodoro"
+      "title": "Pomodoro #4",
+      "type": "work"
       "time": 5,
     },
     {
+      "title": "Long Break",
       "type": "break"
       "time": 5,
     }
@@ -42,12 +50,12 @@
     {
         "remain": 10,
         "duration": 3,
-        "sound": "sound/alert1.mp3",
+        "sound": null,
     },
     {
         "remain": 5,
         "duration": 2,
-        "sound": "sound/alert2.mp3",
+        "sound": "sound/alert.mp3",
     }
   ],
 
@@ -60,7 +68,7 @@
     # additional mouse area near position, px
     "mousearea": "10",
 
-    "sound": "sound/pomodoro.mp3",
+    "sound": null, #"sound/pomodoro.mp3",
 
     "background": "#dc143c",
     "foreground": "#ffffff",
@@ -70,13 +78,9 @@
     # lock mouse and keyboard during a break (true | false)
     "lockcontrols": true,
 
-    "sound": "sound/break.mp3",
+    "sound": null, #"sound/break.mp3",
 
     "background": "#8f76a8",
-    "foreground": "#ffffff",
-  },
-
-  "counter": {
     "foreground": "#ffffff",
   },
 

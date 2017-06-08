@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,6 +13,7 @@ namespace PCTomatoTime
 {
     public partial class Form1 : Form
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private Timer timeUnitTimer, tomatoShowTimer;
         int counter = 0;
@@ -72,11 +74,10 @@ namespace PCTomatoTime
             lblBreakTime.Font = new Font(FontFamily.GenericSerif, fontSizeBreak);
             lblBreakTime.ForeColor = config.Face.BreakForeground;
 
-            var fontSizeTomato = Screen.PrimaryScreen.Bounds.Width / 50;
+            var fontSizeTomato  = Screen.PrimaryScreen.Bounds.Width / 50;
             lblPomodoroTime.Font = new Font(FontFamily.GenericSerif, fontSizeTomato);
             lblPomodoroTime.ForeColor = config.Face.PomodoroForeground;
 
-            lblPomodoroCounter.ForeColor = config.Face.CounterForeground;
 
             startPomodoro();
         }
@@ -184,6 +185,9 @@ namespace PCTomatoTime
 
         private void startBreak()
         {
+            this.FadeOut(true);
+
+            Logger.Info("Start break[{0}] ({1})", currentRound, CurrentTimeUnit.Title);
             Helper.PlaySound(config.BreakSound);
 
             // update form size equal to screen size
@@ -210,6 +214,7 @@ namespace PCTomatoTime
 
         private void startPomodoro()
         {
+            Logger.Info("Start pomodoro[{0}|{1}] ({2})", currentRound, pomodoroCounter, CurrentTimeUnit.Title);
             Helper.PlaySound(config.PomodoroSound);
 
             this.FadeOut();
@@ -240,7 +245,18 @@ namespace PCTomatoTime
 
         private void updatePomodoroCounterPosition()
         {
+            // title
+            var fontSizeTitle = (IsPomodoro ? lblPomodoroTime.Font.Size : lblBreakTime.Font.Size) / 4;
+            lblTitle.Font = new Font(FontFamily.GenericSerif, fontSizeTitle);
+
+            lblTitle.Text = CurrentTimeUnit.Title;
+            lblTitle.Left = this.Width / 2 - lblTitle.Width / 2;
+            lblTitle.Top = (IsPomodoro ? lblPomodoroTime.Top : lblBreakTime.Top) / 4;
+            lblTitle.ForeColor = IsPomodoro ? config.Face.PomodoroForeground : config.Face.BreakForeground;
+
+            // pomodoro counter
             lblPomodoroCounter.Text = string.Format("{0} pomodoro", pomodoroCounter);
+            lblPomodoroCounter.ForeColor = lblTitle.ForeColor;
 
             switch (config.Position)
             {
@@ -248,7 +264,7 @@ namespace PCTomatoTime
                 case "bottom-right":
                 case "right":
                     lblPomodoroCounter.Left = 10;
-                    lblPomodoroCounter.Top = 10;
+                    lblPomodoroCounter.Top = this.Height - lblPomodoroCounter.Height - 10;
                     break;
                 case "top-left":
                 case "bottom-left":
@@ -256,7 +272,7 @@ namespace PCTomatoTime
                 case "top":
                 case "left":
                     lblPomodoroCounter.Left = this.Width - lblPomodoroCounter.Width - 10;
-                    lblPomodoroCounter.Top = 10;
+                    lblPomodoroCounter.Top = this.Height - lblPomodoroCounter.Height - 10;
                     break;
                 default:
                     goto case "top-left";
@@ -362,7 +378,7 @@ namespace PCTomatoTime
                 this.Opacity = 100;
                 return;
             }
-            for (int i = 1; i < 100; i+=2)
+            for (int i = 1; i < 95; i+=3)
             {
                 var opacity = (double)i / 100;
                 this.Opacity = opacity;
@@ -371,19 +387,24 @@ namespace PCTomatoTime
           
         }
 
-        public void FadeOut()
+        public void FadeOut(bool immediate = false)
         {
             // do nothing if already hidden
             if (!this.Visibility)
             {
                 return;
             }
-            for (int i = 100; i > 0; i--)
+            if (immediate)
+            {
+                goto end;
+            }
+            for (int i = 100; i > 0; i-=3)
             {
                 var opacity = (double)i / 100;
                 this.Opacity = opacity;
                 this.Refresh();
             }
+        end:
             this.Hide();
             this.Visibility = false;
         }

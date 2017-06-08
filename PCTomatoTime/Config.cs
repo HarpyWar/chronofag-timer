@@ -17,14 +17,13 @@ namespace PCTomatoTime
             foreach (dynamic item in jobj["rounds"])
             {
                 TimeUnit unit;
-                int limit = item["time"];
-                if (item["type"] == "pomodoro")
+                if (item["type"] == "work")
                 {
-                    unit = new Pomodoro(limit);
+                    unit = new Pomodoro(item["time"], item["title"]);
                 }
                 else // break
                 {
-                    unit = new Break(limit);
+                    unit = new Break(item["time"], item["title"]);
                 }
                 Times.Add(unit);
             }
@@ -49,7 +48,6 @@ namespace PCTomatoTime
             Face.PomodoroForeground = FromHex(jobj["pomodoro"]["foreground"]);
             Face.BreakBackground = FromHex(jobj["break"]["background"]);
             Face.BreakForeground = FromHex(jobj["break"]["foreground"]);
-            Face.CounterForeground = FromHex(jobj["counter"]["foreground"]);
 
             // position
             Position = jobj["pomodoro"]["position"];
@@ -84,7 +82,6 @@ namespace PCTomatoTime
             public Color PomodoroBackground;
             public Color BreakBackground;
             public Color BreakForeground;
-            public Color CounterForeground;
         }
 
 

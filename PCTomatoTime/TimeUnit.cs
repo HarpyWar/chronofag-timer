@@ -8,9 +8,10 @@ namespace PCTomatoTime
 {
     public class TimeUnit
     {
-        public TimeUnit(int limit)
+        public TimeUnit(int limit, string title)
         {
             CounterLimit = limit;
+            Title = title;
         }
         /// <summary>
         /// Counter limit to go next time
@@ -20,17 +21,23 @@ namespace PCTomatoTime
             get;
             private set;
         }
+
+        public string Title
+        {
+            get;
+            private set;
+        }
     }
 
     public class Break : TimeUnit
     {
-        public Break(int limit) : base(limit)
+        public Break(int limit, string title) : base(limit, title)
         {
         }
     }
     public class Pomodoro : TimeUnit
     {
-        public Pomodoro(int limit) : base(limit)
+        public Pomodoro(int limit, string title) : base(limit, title)
         {
         }
     }
