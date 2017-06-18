@@ -44,10 +44,13 @@ namespace PCTomatoTime
             }
 
             // colors
-            Face.PomodoroBackground = FromHex(jobj["pomodoro"]["background"]);
-            Face.PomodoroForeground = FromHex(jobj["pomodoro"]["foreground"]);
-            Face.BreakBackground = FromHex(jobj["break"]["background"]);
-            Face.BreakForeground = FromHex(jobj["break"]["foreground"]);
+            Face = new Style()
+            {
+                PomodoroBackground = FromHex(jobj["pomodoro"]["background"]),
+                PomodoroForeground = FromHex(jobj["pomodoro"]["foreground"]),
+                BreakBackground = FromHex(jobj["break"]["background"]),
+                BreakForeground = FromHex(jobj["break"]["foreground"])
+            };
 
             // position
             Position = jobj["pomodoro"]["position"];
@@ -56,25 +59,28 @@ namespace PCTomatoTime
             // sounds
             PomodoroSound = jobj["pomodoro"]["sound"];
             BreakSound = jobj["break"]["sound"];
+            
+            IdleTime = jobj["idletime"];
         }
 
         public List<TimeUnit> Times { get; private set; }
         public List<Alert> Alerts { get; private set; }
 
-        public Style Face;
+        public Style Face { get; private set; }
 
-        public string Position;
-        public int MouseArea;
+        public string Position { get; private set; }
+        public int MouseArea { get; private set; }
 
         /// <summary>
         /// File to play when pomodoro start
         /// </summary>
-        public string PomodoroSound;
+        public string PomodoroSound { get; private set; }
         /// <summary>
         /// File to play when break start
         /// </summary>
-        public string BreakSound;
-
+        public string BreakSound { get; private set; }
+        
+        public int IdleTime { get; private set; }
 
         public struct Style
         {

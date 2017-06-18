@@ -5,42 +5,82 @@
     {
       "title": "Pomodoro #1",
       "type": "work"
-      "time": 5,
+      "time": 1500,
     },
     {
       "title": "Break #1",
       "type": "break"
-      "time": 5,
+      "time": 300,
     },
     {
       "title": "Pomodoro #2",
       "type": "work"
-      "time": 5,
+      "time": 1500,
     },
     {
       "title": "Break #2",
       "type": "break"
-      "time": 5,
+      "time": 300,
     },
     {
       "title": "Pomodoro #3",
       "type": "work"
-      "time": 5,
+      "time": 1500,
     },
     {
       "title": "Break #3",
       "type": "break"
-      "time": 5,
+      "time": 300,
     },
     {
       "title": "Pomodoro #4",
       "type": "work"
-      "time": 5,
+      "time": 1500,
+    },
+    {
+      "title": "Medium Break",
+      "type": "break"
+      "time": 600,
+    },
+	{
+      "title": "Pomodoro #5",
+      "type": "work"
+      "time": 1500,
+    },
+    {
+      "title": "Break #5",
+      "type": "break"
+      "time": 300,
+    },
+    {
+      "title": "Pomodoro #6",
+      "type": "work"
+      "time": 1500,
+    },
+    {
+      "title": "Break #6",
+      "type": "break"
+      "time": 300,
+    },
+    {
+      "title": "Pomodoro #7",
+      "type": "work"
+      "time": 1500,
+    },
+    {
+      "title": "Break #7",
+      "type": "break"
+      "time": 300,
+    },
+    {
+      "title": "Pomodoro #8",
+      "type": "work"
+      "time": 1500,
     },
     {
       "title": "Long Break",
       "type": "break"
-      "time": 5,
+      "time": 1800,
     }
   ],
 
@@ -48,17 +88,16 @@
   # show pomodoro timer when remain X seconds for Y duration
   "alerts": [
     {
-        "remain": 10,
+        "remain": 300,
         "duration": 3,
         "sound": null,
     },
     {
-        "remain": 5,
-        "duration": 2,
+        "remain": 60,
+        "duration": 3,
         "sound": "sound/alert.mp3",
     }
   ],
-
 
   "pomodoro": {
     # where show timer
@@ -68,7 +107,7 @@
     # additional mouse area near position, px
     "mousearea": "10",
 
-    "sound": null, #"sound/pomodoro.mp3",
+    "sound": "sound/pomodoro.mp3",
 
     "background": "#dc143c",
     "foreground": "#ffffff",
@@ -84,5 +123,8 @@
     "foreground": "#ffffff",
   },
 
+  # seconds of inactivity when idle mode will be enabled
+  #  (set 0 to disable)
+  "idletime": 60
 
 }

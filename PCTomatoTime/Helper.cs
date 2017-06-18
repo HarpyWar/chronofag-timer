@@ -34,5 +34,7 @@ namespace PCTomatoTime
                 Logger.Error("Could not play sound " + e.Message);
             }
         }
+
+
     }
 }

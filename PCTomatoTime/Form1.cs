@@ -24,6 +24,11 @@ namespace PCTomatoTime
         int pomodoroCounter = 0;
 
         /// <summary>
+        /// idle seconds
+        /// </summary>
+        uint idleTime = 0;
+
+        /// <summary>
         /// Current alert, show if not null
         /// </summary>
         Alert Alert = null;
@@ -34,6 +39,20 @@ namespace PCTomatoTime
         {
             InitializeComponent();
             this.Width = this.Height = 0;
+            this.TopMost = true;
+
+            var menuQuitItem = new MenuItem() { Text = "Quit" };
+            menuQuitItem.Click += MenuQuitItem_Click;
+            var contextMenu = new System.Windows.Forms.ContextMenu();
+            contextMenu.MenuItems.AddRange(new MenuItem[] { menuQuitItem });
+            this.notifyIcon1.Text = this.Text = "Tomato Time";
+            this.notifyIcon1.ContextMenu = contextMenu;
+        }
+
+        private void MenuQuitItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Environment.Exit(0);
         }
 
         /// <summary>
@@ -65,7 +84,6 @@ namespace PCTomatoTime
                 Interval = 10,
                 Enabled = true
             };
-    
 
             timeUnitTimer.Tick += _timeUnitTimer_Elapsed;
             tomatoShowTimer.Tick += TomatoShowTimer_Tick;
@@ -82,12 +100,17 @@ namespace PCTomatoTime
             startPomodoro();
         }
 
+        /// <summary>
+        /// Timer to handle mouse move
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TomatoShowTimer_Tick(object sender, EventArgs e)
         {
             if (IsPomodoro)
             {
                 // if mouse cursor in hot area
-                if (mouseShowPomodoro())
+                if (mouseShowPomodoro() || IsIdle)
                 {
                     // show form
                     this.FadeIn(true);
@@ -101,6 +124,32 @@ namespace PCTomatoTime
                 }
             }
         }
+
+        public bool IsIdle
+        {
+            get
+            {
+                // if zero then disable idle mode
+                if (config.IdleTime == 0)
+                {
+                    return false;
+                }
+
+                var idle = idleTime > config.IdleTime;
+                if (!_idle && idle)
+                {
+                    _idle = true;
+                    Logger.Info("Start idle");
+                }
+                if (_idle && !idle)
+                {
+                    _idle = false;
+                    Logger.Info("End idle");
+                }
+                return idle;
+            }
+        }
+        private bool _idle = false;
 
         public bool IsPomodoro
         {
@@ -121,8 +170,14 @@ namespace PCTomatoTime
             }
         }
 
+        /// <summary>
+        /// Main timer loop
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void _timeUnitTimer_Elapsed(object sender, EventArgs e)
         {
+
             // check for round finish
             if (counter >= CurrentTimeUnit.CounterLimit)
             {
@@ -149,17 +204,36 @@ namespace PCTomatoTime
                 return;
             }
 
+            // handle idle
+            if (CurrentTimeUnit is Pomodoro)
+            {
+                // update idle time
+                idleTime = IdleTimeFinder.GetIdleTimeSec();
+                // pause pomodoro if idle
+                if (IsIdle)
+                {
+                    // decrease counter up to init pomodoro time
+                    if (counter > 0)
+                    {
+                        counter--;
+                        goto updatePositions;
+                    }
+                    return;
+                }
+            }
+
             counter++;
 
-            // alerts
+
+            // handle alerts
             foreach(var alert in config.Alerts)
             {
                 if (alert.Remain == CurrentTimeUnit.CounterLimit - counter)
                 {
+                    Helper.PlaySound(alert.Sound);
                     this.FadeIn();
                     alert.Reset();
                     Alert = alert;
-                    Helper.PlaySound(alert.Sound);
                 }
             }
             if (Alert != null)
@@ -171,6 +245,8 @@ namespace PCTomatoTime
                 }
             }
 
+        updatePositions:
+
             // set label position
             if (CurrentTimeUnit is Break)
             {
@@ -180,7 +256,7 @@ namespace PCTomatoTime
             {
                 updateTomatoPosition();
             }
-            updatePomodoroCounterPosition();
+            updateElementsPosition();
         }
 
         private void startBreak()
@@ -200,7 +276,8 @@ namespace PCTomatoTime
             lblPomodoroTime.Hide();
 
             updateBreakPosition();
-            updatePomodoroCounterPosition();
+            updateElementsPosition();
+
 
             this.FadeIn();
         }
@@ -231,9 +308,12 @@ namespace PCTomatoTime
             lblBreakTime.Hide();
 
             updateTomatoPosition();
-            updatePomodoroCounterPosition();
+            updateElementsPosition();
 
             pomodoroCounter++;
+
+            // reset
+            additionalBreakTime = 0;
         }
         private void updateTomatoPosition()
         {
@@ -243,7 +323,7 @@ namespace PCTomatoTime
             lblPomodoroTime.Top = this.Height / 2 - lblPomodoroTime.Height / 2;
         }
 
-        private void updatePomodoroCounterPosition()
+        private void updateElementsPosition()
         {
             // title
             var fontSizeTitle = (IsPomodoro ? lblPomodoroTime.Font.Size : lblBreakTime.Font.Size) / 4;
@@ -253,30 +333,6 @@ namespace PCTomatoTime
             lblTitle.Left = this.Width / 2 - lblTitle.Width / 2;
             lblTitle.Top = (IsPomodoro ? lblPomodoroTime.Top : lblBreakTime.Top) / 4;
             lblTitle.ForeColor = IsPomodoro ? config.Face.PomodoroForeground : config.Face.BreakForeground;
-
-            // pomodoro counter
-            lblPomodoroCounter.Text = string.Format("{0} pomodoro", pomodoroCounter);
-            lblPomodoroCounter.ForeColor = lblTitle.ForeColor;
-
-            switch (config.Position)
-            {
-                case "top-right":
-                case "bottom-right":
-                case "right":
-                    lblPomodoroCounter.Left = 10;
-                    lblPomodoroCounter.Top = this.Height - lblPomodoroCounter.Height - 10;
-                    break;
-                case "top-left":
-                case "bottom-left":
-                case "bottom":
-                case "top":
-                case "left":
-                    lblPomodoroCounter.Left = this.Width - lblPomodoroCounter.Width - 10;
-                    lblPomodoroCounter.Top = this.Height - lblPomodoroCounter.Height - 10;
-                    break;
-                default:
-                    goto case "top-left";
-            }
         }
 
 
@@ -412,6 +468,6 @@ namespace PCTomatoTime
 
 
         #endregion
-
+        
     }
 }

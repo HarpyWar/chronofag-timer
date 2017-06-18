@@ -28,10 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.lblPomodoroTime = new System.Windows.Forms.Label();
             this.lblBreakTime = new System.Windows.Forms.Label();
-            this.lblPomodoroCounter = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.SuspendLayout();
             // 
             // lblPomodoroTime
@@ -52,15 +54,6 @@
             this.lblBreakTime.TabIndex = 1;
             this.lblBreakTime.Text = "label2";
             // 
-            // lblPomodoroCounter
-            // 
-            this.lblPomodoroCounter.AutoSize = true;
-            this.lblPomodoroCounter.Location = new System.Drawing.Point(207, 71);
-            this.lblPomodoroCounter.Name = "lblPomodoroCounter";
-            this.lblPomodoroCounter.Size = new System.Drawing.Size(46, 17);
-            this.lblPomodoroCounter.TabIndex = 3;
-            this.lblPomodoroCounter.Text = "label2";
-            // 
             // lblTitle
             // 
             this.lblTitle.AutoSize = true;
@@ -70,13 +63,18 @@
             this.lblTitle.TabIndex = 4;
             this.lblTitle.Text = "label2";
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "notifyIcon1";
+            this.notifyIcon1.Visible = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(389, 231);
             this.Controls.Add(this.lblTitle);
-            this.Controls.Add(this.lblPomodoroCounter);
             this.Controls.Add(this.lblBreakTime);
             this.Controls.Add(this.lblPomodoroTime);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -95,8 +93,8 @@
 
         private System.Windows.Forms.Label lblPomodoroTime;
         private System.Windows.Forms.Label lblBreakTime;
-        private System.Windows.Forms.Label lblPomodoroCounter;
         private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
     }
 }
 
