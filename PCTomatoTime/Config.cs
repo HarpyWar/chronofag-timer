@@ -1,4 +1,5 @@
 ﻿using Hjson;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,6 +10,7 @@ namespace PCTomatoTime
 {
     public class Config
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public Config(string fileName)
         {
             var jobj = HjsonValue.Load(fileName).Qo();
@@ -28,6 +30,13 @@ namespace PCTomatoTime
                 Times.Add(unit);
             }
 
+            if (Times.Where(t => t is Pomodoro).FirstOrDefault() == null || Times.Where(t => t is Break).FirstOrDefault() == null)
+            {
+                Logger.Fatal("rounds must contain at least one pomodoro and one break");
+                Environment.Exit(1);
+            }
+
+
             // alerts
             Alerts = new List<Alert>();
             if (jobj["alerts"] != null)
@@ -42,6 +51,14 @@ namespace PCTomatoTime
                     Alerts.Add(alert);
                 }
             }
+
+            // silence apps
+            SilenceApps = new List<string>();
+            foreach (dynamic item in jobj["silence_apps"])
+            {
+                SilenceApps.Add(item);
+            }
+
 
             // colors
             Face = new Style()
@@ -59,12 +76,17 @@ namespace PCTomatoTime
             // sounds
             PomodoroSound = jobj["pomodoro"]["sound"];
             BreakSound = jobj["break"]["sound"];
-            
+
             IdleTime = jobj["idletime"];
+            IdleTitle = jobj["idle_title"];
+            AlwaysOnTop = jobj["alwaysontop"];
+
+
         }
 
         public List<TimeUnit> Times { get; private set; }
         public List<Alert> Alerts { get; private set; }
+        public List<string> SilenceApps { get; private set; }
 
         public Style Face { get; private set; }
 
@@ -81,6 +103,8 @@ namespace PCTomatoTime
         public string BreakSound { get; private set; }
         
         public int IdleTime { get; private set; }
+        public string IdleTitle { get; private set; }
+        public bool AlwaysOnTop{ get; private set; }
 
         public struct Style
         {

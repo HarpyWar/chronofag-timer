@@ -4,83 +4,83 @@
   "rounds": [
     {
       "title": "Pomodoro #1",
-      "type": "work"
-      "time": 1500,
+      "type": "work",
+      "time": 10
     },
     {
       "title": "Break #1",
-      "type": "break"
-      "time": 300,
+      "type": "break",
+      "time": 5
     },
     {
       "title": "Pomodoro #2",
-      "type": "work"
-      "time": 1500,
+      "type": "work",
+      "time": 1500
     },
     {
       "title": "Break #2",
-      "type": "break"
-      "time": 300,
+      "type": "break",
+      "time": 300
     },
     {
       "title": "Pomodoro #3",
-      "type": "work"
-      "time": 1500,
+      "type": "work",
+      "time": 1500
     },
     {
       "title": "Break #3",
-      "type": "break"
-      "time": 300,
+      "type": "break",
+      "time": 300
     },
     {
       "title": "Pomodoro #4",
-      "type": "work"
-      "time": 1500,
+      "type": "work",
+      "time": 1500
     },
     {
       "title": "Medium Break",
-      "type": "break"
-      "time": 600,
+      "type": "break",
+      "time": 600
     },
 	{
       "title": "Pomodoro #5",
-      "type": "work"
-      "time": 1500,
+      "type": "work",
+      "time": 1500
     },
     {
       "title": "Break #5",
-      "type": "break"
-      "time": 300,
+      "type": "break",
+      "time": 300
     },
     {
       "title": "Pomodoro #6",
-      "type": "work"
-      "time": 1500,
+      "type": "work",
+      "time": 1500
     },
     {
       "title": "Break #6",
-      "type": "break"
-      "time": 300,
+      "type": "break",
+      "time": 300
     },
     {
       "title": "Pomodoro #7",
-      "type": "work"
-      "time": 1500,
+      "type": "work",
+      "time": 1500
     },
     {
       "title": "Break #7",
-      "type": "break"
-      "time": 300,
+      "type": "break",
+      "time": 300
     },
     {
       "title": "Pomodoro #8",
-      "type": "work"
-      "time": 1500,
+      "type": "work",
+      "time": 1500
     },
     {
       "title": "Long Break",
-      "type": "break"
-      "time": 1800,
+      "type": "break",
+      "time": 1800
     }
   ],
 
@@ -90,27 +90,37 @@
     {
         "remain": 300,
         "duration": 3,
-        "sound": null,
+        "sound": null
     },
     {
         "remain": 60,
         "duration": 3,
-        "sound": "sound/alert.mp3",
+        "sound": "sound/alert.mp3"
     }
   ],
+
+  # if one of the following processes is active then do not show a pomodoro window 
+  #  when mouse move near a corner, and do not show alerts (only play sound)
+  #  In most cases here should be games that are running in full screen
+  "silence_apps": [
+    "War3",
+	  "starcraft",
+	  "StarCraft II"
+  ],
+
 
   "pomodoro": {
     # where show timer
     #  (top-right | top-left | bottom-left | bottom-right | bottom | top | left | right)
     "position": "top-left", 
 
-    # additional mouse area near position, px
+    # additional mouse area near position (px)
     "mousearea": "10",
 
     "sound": "sound/pomodoro.mp3",
 
     "background": "#dc143c",
-    "foreground": "#ffffff",
+    "foreground": "#ffffff"
   },
 
   "break": {
@@ -120,11 +130,17 @@
     "sound": null, #"sound/break.mp3",
 
     "background": "#8f76a8",
-    "foreground": "#ffffff",
+    "foreground": "#ffffff"
   },
 
   # seconds of inactivity when idle mode will be enabled
   #  (set 0 to disable)
-  "idletime": 60
+  "idletime": 5,
+  
+  # title for idle
+  "idle_title": "IDLE MODE",
 
+  # break window always on top
+  #  (you will not able to close it until timer ends)
+  "alwaysontop": false,
 }
