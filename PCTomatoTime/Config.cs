@@ -66,8 +66,15 @@ namespace PCTomatoTime
                 PomodoroBackground = FromHex(jobj["pomodoro"]["background"]),
                 PomodoroForeground = FromHex(jobj["pomodoro"]["foreground"]),
                 BreakBackground = FromHex(jobj["break"]["background"]),
-                BreakForeground = FromHex(jobj["break"]["foreground"])
+                BreakForeground = FromHex(jobj["break"]["foreground"]),
+                UserTimerBackground = new List<Color>(),
+                UserTimerForeground = FromHex(jobj["usertimer"]["foreground"])
             };
+            foreach (dynamic item in jobj["usertimer"]["background"])
+            {
+                Face.UserTimerBackground.Add(FromHex(item));
+            }
+
 
             // position
             Position = jobj["pomodoro"]["position"];
@@ -76,12 +83,13 @@ namespace PCTomatoTime
             // sounds
             PomodoroSound = jobj["pomodoro"]["sound"];
             BreakSound = jobj["break"]["sound"];
+            UserTimerSound = jobj["usertimer"]["sound"];
+
+            UserTimerShowFirstTime = jobj["usertimer"]["showfirsttime"];
 
             IdleTime = jobj["idletime"];
             IdleTitle = jobj["idle_title"];
             AlwaysOnTop = jobj["alwaysontop"];
-
-
         }
 
         public List<TimeUnit> Times { get; private set; }
@@ -101,10 +109,13 @@ namespace PCTomatoTime
         /// File to play when break start
         /// </summary>
         public string BreakSound { get; private set; }
-        
+        public string UserTimerSound { get; private set; }
+       
         public int IdleTime { get; private set; }
         public string IdleTitle { get; private set; }
         public bool AlwaysOnTop{ get; private set; }
+
+        public int UserTimerShowFirstTime { get; private set; }
 
         public struct Style
         {
@@ -112,6 +123,8 @@ namespace PCTomatoTime
             public Color PomodoroBackground;
             public Color BreakBackground;
             public Color BreakForeground;
+            public List<Color> UserTimerBackground;
+            public Color UserTimerForeground;
         }
 
 

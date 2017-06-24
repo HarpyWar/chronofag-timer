@@ -12,6 +12,7 @@ namespace PCTomatoTime
     class Helper
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Random rnd = new Random(DateTime.Now.Millisecond);
 
         public static void PlaySound(string fileName)
         {
@@ -32,6 +33,15 @@ namespace PCTomatoTime
             }
         }
 
+        public static string GetTimeElapsedString(int counter, int limit)
+        {
+            var time = TimeSpan.FromSeconds(limit - counter);
+            return time.ToString(@"mm\:ss");
+        }
 
+        public static int GetRandom(int min, int max)
+        {
+            return rnd.Next(min, max);
+        }
     }
 }

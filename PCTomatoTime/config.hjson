@@ -5,12 +5,12 @@
     {
       "title": "Pomodoro #1",
       "type": "work",
-      "time": 10
+      "time": 1500
     },
     {
       "title": "Break #1",
       "type": "break",
-      "time": 5
+      "time": 300
     },
     {
       "title": "Pomodoro #2",
@@ -119,7 +119,7 @@
 
     "sound": "sound/pomodoro.mp3",
 
-    "background": "#dc143c",
+    "background": "#CB2028",
     "foreground": "#ffffff"
   },
 
@@ -130,6 +130,16 @@
     "sound": null, #"sound/break.mp3",
 
     "background": "#8f76a8",
+    "foreground": "#ffffff"
+  },
+
+  "usertimer": {
+    "sound": "sound/alarmwatch.mp3",
+    # show during X seconds after add new user timer
+    "showfirsttime": 3,
+
+    # array of random background colors
+    "background": ["#B31E3C", "#8B2889", "#512A7B", "#2D2A7B", "#282E78", "#233A80", "#094D8C", "#10659F", "#0C81A2", "#0E9553", "#138B43", "#3A9945", "#3A9945", "#70A241", "#9BB639"],
     "foreground": "#ffffff"
   },
 
