@@ -11,12 +11,16 @@ using System.Windows.Forms;
 
 namespace PCTomatoTime
 {
-    public partial class Form1 : Form
+    public partial class TomatoForm : Form
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private Timer timeUnitTimer, tomatoShowTimer;
 
+        /// <summary>
+        /// Custom user timers
+        /// </summary>
+        private Dictionary<string, UserTimer> customTimers = new Dictionary<string, UserTimer>();
 
         int Counter
         {
@@ -84,31 +88,30 @@ namespace PCTomatoTime
         }
         int _idleDeltaCounter;
 
-
-        public Form1()
-        {
-            InitializeComponent();
-            this.Width = this.Height = 0;
-
-            var menuQuitItem = new MenuItem() { Text = "Quit" };
-            menuQuitItem.Click += MenuQuitItem_Click;
-            var contextMenu = new System.Windows.Forms.ContextMenu();
-            contextMenu.MenuItems.AddRange(new MenuItem[] { menuQuitItem });
-            this.notifyIcon1.Text = this.Text = "Tomato Time";
-            this.notifyIcon1.ContextMenu = contextMenu;
-        }
-
-        private void MenuQuitItem_Click(object sender, EventArgs e)
-        {
-            this.Close();
-            Environment.Exit(0);
-        }
-
         /// <summary>
         /// Visible property sometimes true inside Timer.Tick event when actually it's false
         /// so use own robust property
         /// </summary>
         public bool Visibility = true;
+
+        public TomatoForm()
+        {
+            InitializeComponent();
+            this.Width = this.Height = 0;
+
+            // fill tray context menu
+            var menuQuit = new MenuItem() { Text = "Quit" };
+            menuQuit.Click += MenuQuit_Click;
+
+            var menuAddTimer = new MenuItem() { Text = "Add Timer..." };
+            menuAddTimer.Click += MenuAddTimer_Click;
+
+            var contextMenu = new System.Windows.Forms.ContextMenu();
+            contextMenu.MenuItems.AddRange(new MenuItem[] { menuAddTimer, menuQuit });
+            this.notifyIcon1.Text = this.Text = "Tomato Time";
+            this.notifyIcon1.ContextMenu = contextMenu;
+
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -149,6 +152,27 @@ namespace PCTomatoTime
             startPomodoro();
         }
 
+        private void MenuQuit_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Environment.Exit(0);
+        }
+        private void MenuAddTimer_Click(object sender, EventArgs e)
+        {
+            if (customTimers.Count >= 7)
+            {
+                MessageBox.Show("7 user timers are maximum", "Could not add timer", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            var frm = new NewUserTimerForm();
+            frm.ShowDialog(this);
+        }
+        private void MenuRemoveTimer_Click(object sender, EventArgs e)
+        {
+            var item = (MenuItem)sender;
+            RemoveCustomTimer(item.Name);
+        }
 
         public bool IsIdle
         {
@@ -251,7 +275,6 @@ namespace PCTomatoTime
         /// <param name="e"></param>
         private void _timeUnitTimer_Elapsed(object sender, EventArgs e)
         {
-
             // check for round finish
             if (Counter >= CurrentTimeUnit.CounterLimit)
             {
@@ -306,9 +329,8 @@ namespace PCTomatoTime
 
             Counter++;
 
-
             // handle alerts
-            foreach(var alert in config.Alerts)
+            foreach (var alert in config.Alerts)
             {
                 if (alert.Remain == CurrentTimeUnit.CounterLimit - Counter)
                 {
@@ -316,7 +338,8 @@ namespace PCTomatoTime
                     // show alert only for all apps except silence 
                     if (AllowMouseEventForCurrentProcess())
                     {
-                        this.FadeIn();
+                        // do not show custom timers when alert
+                        this.FadeIn(true, false);
                     }
 
                     alert.Reset();
@@ -384,7 +407,7 @@ namespace PCTomatoTime
         }
         private void updateBreakPosition()
         {
-            lblBreakTime.Text = getTimeElapsedString(); 
+            lblBreakTime.Text = Helper.GetTimeElapsedString(CurrentTimeUnit.CounterLimit, Counter);
 
             lblBreakTime.Left = this.Width / 2 - lblBreakTime.Width / 2;
             lblBreakTime.Top = this.Height / 2 - lblBreakTime.Height / 2;
@@ -415,7 +438,7 @@ namespace PCTomatoTime
         }
         private void updateTomatoPosition()
         {
-            lblPomodoroTime.Text = getTimeElapsedString();
+            lblPomodoroTime.Text = Helper.GetTimeElapsedString(CurrentTimeUnit.CounterLimit, Counter);
 
             lblPomodoroTime.Left = this.Width / 2 - lblPomodoroTime.Width / 2;
             lblPomodoroTime.Top = this.Height / 2 - lblPomodoroTime.Height / 2;
@@ -437,11 +460,6 @@ namespace PCTomatoTime
 
 
 
-        private string getTimeElapsedString()
-        {
-            var time = TimeSpan.FromSeconds(CurrentTimeUnit.CounterLimit - Counter);
-            return time.ToString(@"mm\:ss");
-        }
 
 
         private Point getPomodoroPosition()
@@ -523,7 +541,7 @@ namespace PCTomatoTime
         /// Show form with fade animation
         /// </summary>
         /// <param name="immediate">without animation</param>
-        public void FadeIn(bool immediate = false)
+        public void FadeIn(bool immediate = false, bool customTimers = true)
         {
             // do nothing if already visible
             if (this.Visibility)
@@ -533,7 +551,13 @@ namespace PCTomatoTime
             this.Opacity = 0;
             this.Left = this.Top = 0; //instead this.Show(); which toggle focus
             Logger.Trace("Show");
- 
+
+            if (customTimers)
+            {
+                toggleUserTimers(true);
+            }
+
+
             this.Visibility = true;
             if (immediate)
             {
@@ -563,7 +587,9 @@ namespace PCTomatoTime
                 return;
             }
             Logger.Trace("Hide");
-            if (immediate)
+            toggleUserTimers(false);
+            // if customtimers not null then also immediate hide
+            if (immediate || customTimers.Count > 0)
             {
                 goto complete;
             }
@@ -630,8 +656,108 @@ namespace PCTomatoTime
             return true;
         }
 
+        #region User Timers
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="show">show or hide</param>
+        private void toggleUserTimers(bool show)
+        {
+            // show only if not alert
+            if (show)
+            {
+                updateUserTimerIDs();
+                customTimers.OrderBy(t => t.Value.Seconds).ToList().ForEach(t => t.Value.Show());
+            }
+            else
+            {
+                customTimers.OrderBy(t => t.Value.Seconds).ToList().ForEach(t => t.Value.Hide());
+            }
+        }
 
+        private void updateUserTimerIDs()
+        {
+            var i = 0;
+            // update timers ID to update positioon when old timers deleted
+            customTimers.OrderBy(t => t.Value.Seconds).ToList().ForEach(t => { t.Value.ID = ++i; });
+        }
+
+
+        /// <summary>
+        /// Add custom timer into 
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="seconds">when timer should be elapsed</param>
+        /// <returns></returns>
+        public string AddCustomTimer(string title, int seconds)
+        {
+            var key = Guid.NewGuid().ToString();
+
+            MenuItem menuRemoveTimer;
+            // add "Remove Timer" menu item if not exist
+            var find = notifyIcon1.ContextMenu.MenuItems.Find("menuRemoveItem", false);
+            if (find.Count() == 0)
+            {
+                menuRemoveTimer = new MenuItem() { Text = "Remove Timer", Name = "menuRemoveItem" };
+                notifyIcon1.ContextMenu.MenuItems.Add(0, menuRemoveTimer);
+            }
+            else
+            {
+                menuRemoveTimer = find.First();
+            }
+            // add timer menu item 
+            var menuTimerItem = new MenuItem() {
+                Text = title,
+                Name = key
+            };
+            menuTimerItem.Click += MenuRemoveTimer_Click;
+            menuRemoveTimer.MenuItems.Add(menuTimerItem);
+
+            // add timer
+            var utimer = new UserTimer(key, title, seconds, config);
+            utimer.StoppedEvent += Utimer_StoppedEvent;
+            customTimers.Add(key, utimer);
+
+            // show first time
+            updateUserTimerIDs();
+            utimer.Show();
+
+            return key;
+
+        }
+
+        private void Utimer_StoppedEvent(object sender, EventArgs e)
+        {
+            var utimer = (UserTimer)sender;
+            RemoveCustomTimer(utimer.Key);
+        }
+
+        public void RemoveCustomTimer(string key)
+        {
+            notifyIcon1.ContextMenu.MenuItems.RemoveByKey(key);
+
+            var find = notifyIcon1.ContextMenu.MenuItems.Find("menuRemoveItem", false);
+            if (find.Count() > 0)
+            {
+                var menuItem = find.First();
+                // remove item
+                menuItem.MenuItems.RemoveByKey(key);
+
+                // if there are no more timers then remove menu "Remove Timer"
+                if (menuItem.MenuItems.Count == 0)
+                {
+                    notifyIcon1.ContextMenu.MenuItems.Remove(menuItem);
+                }
+            }
+
+            // remove timer
+            customTimers[key].Destroy();
+            customTimers.Remove(key);
+        }
+
+
+        #endregion
     }
 }

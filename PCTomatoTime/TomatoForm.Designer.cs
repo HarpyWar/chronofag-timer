@@ -1,6 +1,6 @@
 ﻿namespace PCTomatoTime
 {
-    partial class Form1
+    partial class TomatoForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TomatoForm));
             this.lblPomodoroTime = new System.Windows.Forms.Label();
             this.lblBreakTime = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
