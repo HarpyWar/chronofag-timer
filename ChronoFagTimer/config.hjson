@@ -127,7 +127,7 @@
     # lock mouse and keyboard during a break (true | false)
     "lockcontrols": true,
 
-    "sound": null, #"sound/break.mp3",
+    "sound": "sound/break.mp3",
 
     "background": "#8f76a8",
     "foreground": "#ffffff"

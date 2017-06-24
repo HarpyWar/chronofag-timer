@@ -1,4 +1,4 @@
-﻿namespace PCTomatoTime
+﻿namespace ChronoFagTimer
 {
     partial class NewUserTimerForm
     {
