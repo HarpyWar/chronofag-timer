@@ -210,7 +210,7 @@ namespace ChronoFagTimer
 
 
                 // update idle time
-                var idleTime = IdleTimeFinder.GetIdleTimeSec();
+                var idleTime = WinApi.IdleTimeFinder.GetIdleTimeSec();
 
                 var idle = idleTime >= config.IdleTime;
                 if (!_idle && idle)
