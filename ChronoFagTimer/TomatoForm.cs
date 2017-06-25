@@ -91,6 +91,12 @@ namespace ChronoFagTimer
             }
             set
             {
+                // increase delta only for next pomodoro but not first
+                if (CurrentRound <= 0)
+                {
+                    return;
+                }
+
                 _idleDeltaCounter = value;
                 Logger.Trace("Set IdleDeltaCounter = {0}", _idleDeltaCounter);
                 if (_idleDeltaCounter > getPrevTime(typeof(Break)).CounterLimit)
@@ -294,6 +300,8 @@ namespace ChronoFagTimer
         /// <param name="e"></param>
         private void _timeUnitTimer_Elapsed(object sender, EventArgs e)
         {
+            handleSleepLeap();
+
             // check for round finish
             if (Counter >= CurrentTimeUnit.CounterLimit)
             {
@@ -328,18 +336,13 @@ namespace ChronoFagTimer
                 {
                     if (Counter > 0)
                     {
-                        // decrease counter up to init pomodoro time (while counter > 0)
                         Counter--;
                         // update pomodoro timer
                         goto updatePositions;
                     }
                     else
                     {
-                        // increase delta only for next pomodoro but not first
-                        if (CurrentRound > 0)
-                        {
-                            IdleDeltaCounter++;
-                        }
+                        IdleDeltaCounter++;
                     }
                     // do nothing if counter <= 0
                     return;
@@ -386,6 +389,40 @@ namespace ChronoFagTimer
                 updateTomatoPosition();
             }
             updateElementsPosition();
+        }
+
+        /// <summary>
+        /// Last timer active time
+        /// </summary>
+        DateTime? lastActiveTime = null;
+        private void handleSleepLeap()
+        {
+            if (lastActiveTime == null)
+            {
+                // first assign
+                lastActiveTime = DateTime.Now;
+            }
+            var diff = (DateTime.Now - (DateTime)lastActiveTime).TotalSeconds;
+
+            // if was leap
+            if (diff > config.IdleTime)
+            {
+                Logger.Info("Time leap detected for {0} seconds", diff);
+                // iterate diff untill null
+                while (diff > 0)
+                {
+                    diff--;
+                    if (Counter > 0)
+                    {
+                        Counter--;
+                    }
+                    else
+                    {
+                        IdleDeltaCounter++;
+                    }
+                }
+            }
+            lastActiveTime = DateTime.Now;
         }
 
         private void startBreak()
