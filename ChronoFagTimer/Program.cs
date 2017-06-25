@@ -16,21 +16,29 @@
  */
 
 using System;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace ChronoFagTimer
 {
     static class Program
     {
+        private static readonly Mutex mutex = new Mutex(true, "2f3425e1-66ac-4f31-8aae-8bf17d855e94");
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new TomatoForm());
+            // allow run only single instance
+            if (mutex.WaitOne(TimeSpan.Zero, true))
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new TomatoForm());
+                mutex.ReleaseMutex();
+            }
         }
     }
 }
