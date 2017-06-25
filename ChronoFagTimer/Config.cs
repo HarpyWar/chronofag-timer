@@ -79,10 +79,10 @@ namespace ChronoFagTimer
             // colors
             Face = new Style()
             {
-                PomodoroBackground = FromHex(jobj["pomodoro"]["background"]),
-                PomodoroForeground = FromHex(jobj["pomodoro"]["foreground"]),
-                BreakBackground = FromHex(jobj["break"]["background"]),
-                BreakForeground = FromHex(jobj["break"]["foreground"]),
+                PomodoroBackground = FromHex(jobj["worktimer"]["background"]),
+                PomodoroForeground = FromHex(jobj["worktimer"]["foreground"]),
+                BreakBackground = FromHex(jobj["breaktimer"]["background"]),
+                BreakForeground = FromHex(jobj["breaktimer"]["foreground"]),
                 UserTimerBackground = new List<Color>(),
                 UserTimerForeground = FromHex(jobj["usertimer"]["foreground"])
             };
@@ -91,21 +91,27 @@ namespace ChronoFagTimer
                 Face.UserTimerBackground.Add(FromHex(item));
             }
 
+            // phrases
+            Phrases = new Dictionary<string, string>();
+            foreach (dynamic item in jobj["phrases"])
+            {
+                Phrases.Add(item.Key, item.Value);
+            }
 
             // position
-            Position = jobj["pomodoro"]["position"];
-            MouseArea = jobj["pomodoro"]["mousearea"];
+            Position = jobj["worktimer"]["position"];
+            MouseArea = jobj["worktimer"]["mousearea"];
 
             // sounds
-            PomodoroSound = jobj["pomodoro"]["sound"];
-            BreakSound = jobj["break"]["sound"];
+            PomodoroSound = jobj["worktimer"]["sound"];
+            BreakSound = jobj["breaktimer"]["sound"];
             UserTimerSound = jobj["usertimer"]["sound"];
 
             UserTimerShowFirstTime = jobj["usertimer"]["showfirsttime"];
 
             IdleTime = jobj["idletime"];
             IdleTitle = jobj["idle_title"];
-            AlwaysOnTop = jobj["alwaysontop"];
+            LockExit = jobj["breaktimer"]["lockexit"];
         }
 
         public List<TimeUnit> Times { get; private set; }
@@ -113,6 +119,7 @@ namespace ChronoFagTimer
         public List<string> SilenceApps { get; private set; }
 
         public Style Face { get; private set; }
+        public Dictionary<string, string> Phrases { get; private set; }
 
         public string Position { get; private set; }
         public int MouseArea { get; private set; }
@@ -126,10 +133,10 @@ namespace ChronoFagTimer
         /// </summary>
         public string BreakSound { get; private set; }
         public string UserTimerSound { get; private set; }
-       
+        
         public int IdleTime { get; private set; }
         public string IdleTitle { get; private set; }
-        public bool AlwaysOnTop{ get; private set; }
+        public bool LockExit { get; private set; }
 
         public int UserTimerShowFirstTime { get; private set; }
 
@@ -141,6 +148,16 @@ namespace ChronoFagTimer
             public Color BreakForeground;
             public List<Color> UserTimerBackground;
             public Color UserTimerForeground;
+        }
+
+
+        public string GetPhrase(string key)
+        {
+            if (Phrases.ContainsKey(key))
+            {
+                return Phrases[key];
+            }
+            return string.Format("Phrase '{0}' is not defined", key);
         }
 
 

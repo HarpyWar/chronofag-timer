@@ -22,21 +22,28 @@ namespace ChronoFagTimer
 {
     public partial class NewUserTimerForm : Form
     {
-        public NewUserTimerForm()
+        Config config;
+        public NewUserTimerForm(Config config)
         {
+            this.config = config;
             InitializeComponent();
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
             var seconds = txtHours.Value * 60 * 60 + txtMinutes.Value * 60 + txtSeconds.Value;
-            ((TomatoForm)Owner).AddCustomTimer(txtTitle.Text, (int)seconds);
+            var title = !string.IsNullOrEmpty(txtTitle.Text) ? txtTitle.Text : config.GetPhrase("timerempty");
+            ((TomatoForm)Owner).AddCustomTimer(title, (int)seconds);
             this.Close();
         }
 
         private void NewUserTimerForm_Load(object sender, EventArgs e)
         {
-
+            lblCaption.Text = config.GetPhrase("timercaption");
+            lblHours.Text = config.GetPhrase("timerhours");
+            lblMinutes.Text = config.GetPhrase("timerminutes");
+            lblSeconds.Text = config.GetPhrase("timerseconds");
+            btnStart.Text = config.GetPhrase("timerstart");
         }
 
         private void txtTitle_KeyDown(object sender, KeyEventArgs e)

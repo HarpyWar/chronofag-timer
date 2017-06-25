@@ -180,7 +180,6 @@ namespace ChronoFagTimer
             }
 
             Counter++;
-            updateElementsPosition();
 
             Logger.Trace("User timer counter {0}: ", Key, Counter);
 
@@ -189,12 +188,11 @@ namespace ChronoFagTimer
             {
                 Stop();
 
-                lblDownTitle.Text = string.Format("Stopped at {0}:{1}:{2}", DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
-
+                lblDownTitle.Text = string.Format("{0} {1}:{2}:{3}", config.GetPhrase("timerstoptime"), DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
                 Helper.PlaySound(config.UserTimerSound);
-
                 Show();
             }
+            updateElementsPosition();
         }
 
         private void updateElementsPosition()
@@ -203,6 +201,12 @@ namespace ChronoFagTimer
             if (!visibility)
             {
                 return;
+            }
+
+            // set always on top 
+            if (!form.TopMost)
+            {
+                form.TopMost = true;
             }
 
             // timer

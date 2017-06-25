@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblCaption = new System.Windows.Forms.Label();
             this.btnStart = new System.Windows.Forms.Button();
             this.txtTitle = new System.Windows.Forms.TextBox();
             this.txtHours = new System.Windows.Forms.NumericUpDown();
@@ -36,22 +36,22 @@
             this.txtSeconds = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
+            this.lblHours = new System.Windows.Forms.Label();
+            this.lblMinutes = new System.Windows.Forms.Label();
+            this.lblSeconds = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.txtHours)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtMinutes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtSeconds)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
+            // lblCaption
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 17);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Caption";
+            this.lblCaption.AutoSize = true;
+            this.lblCaption.Location = new System.Drawing.Point(8, 16);
+            this.lblCaption.Name = "lblCaption";
+            this.lblCaption.Size = new System.Drawing.Size(56, 17);
+            this.lblCaption.TabIndex = 0;
+            this.lblCaption.Text = "Caption";
             // 
             // btnStart
             // 
@@ -133,41 +133,41 @@
             this.label3.TabIndex = 8;
             this.label3.Text = ":";
             // 
-            // label4
+            // lblHours
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 71);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(46, 17);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Hours";
+            this.lblHours.AutoSize = true;
+            this.lblHours.Location = new System.Drawing.Point(9, 71);
+            this.lblHours.Name = "lblHours";
+            this.lblHours.Size = new System.Drawing.Size(46, 17);
+            this.lblHours.TabIndex = 9;
+            this.lblHours.Text = "Hours";
             // 
-            // label5
+            // lblMinutes
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(78, 71);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(57, 17);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Minutes";
+            this.lblMinutes.AutoSize = true;
+            this.lblMinutes.Location = new System.Drawing.Point(78, 71);
+            this.lblMinutes.Name = "lblMinutes";
+            this.lblMinutes.Size = new System.Drawing.Size(57, 17);
+            this.lblMinutes.TabIndex = 10;
+            this.lblMinutes.Text = "Minutes";
             // 
-            // label6
+            // lblSeconds
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(150, 71);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(63, 17);
-            this.label6.TabIndex = 11;
-            this.label6.Text = "Seconds";
+            this.lblSeconds.AutoSize = true;
+            this.lblSeconds.Location = new System.Drawing.Point(150, 71);
+            this.lblSeconds.Name = "lblSeconds";
+            this.lblSeconds.Size = new System.Drawing.Size(63, 17);
+            this.lblSeconds.TabIndex = 11;
+            this.lblSeconds.Text = "Seconds";
             // 
             // NewUserTimerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(218, 196);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
+            this.Controls.Add(this.lblSeconds);
+            this.Controls.Add(this.lblMinutes);
+            this.Controls.Add(this.lblHours);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtSeconds);
@@ -175,7 +175,7 @@
             this.Controls.Add(this.txtHours);
             this.Controls.Add(this.txtTitle);
             this.Controls.Add(this.btnStart);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblCaption);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -195,7 +195,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblCaption;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.TextBox txtTitle;
         private System.Windows.Forms.NumericUpDown txtHours;
@@ -203,8 +203,8 @@
         private System.Windows.Forms.NumericUpDown txtSeconds;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label lblHours;
+        private System.Windows.Forms.Label lblMinutes;
+        private System.Windows.Forms.Label lblSeconds;
     }
 }

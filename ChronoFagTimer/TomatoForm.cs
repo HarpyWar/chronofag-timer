@@ -111,35 +111,40 @@ namespace ChronoFagTimer
         public TomatoForm()
         {
             InitializeComponent();
-            this.Width = this.Height = 0;
 
-            // fill tray context menu
-            var menuQuit = new MenuItem() { Text = "Quit" };
-            menuQuit.Click += MenuQuit_Click;
-
-            var menuAddTimer = new MenuItem() { Text = "Add Timer..." };
-            menuAddTimer.Click += MenuAddTimer_Click;
-
-            var contextMenu = new System.Windows.Forms.ContextMenu();
-            contextMenu.MenuItems.AddRange(new MenuItem[] { menuAddTimer, menuQuit });
-            this.notifyIcon1.Text = this.Text = "Tomato Time";
-            this.notifyIcon1.ContextMenu = contextMenu;
-
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
             var configFile = "config.hjson";
             try
             {
                 config = new Config(configFile);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Error loading " + configFile);
                 Environment.Exit(1);
             }
 
+
+            this.Width = this.Height = 0;
+
+            // fill tray context menutimerstoptime
+            var menuQuit = new MenuItem() { Text = config.GetPhrase("quit") };
+            menuQuit.Click += MenuQuit_Click;
+
+            var menuAddTimer = new MenuItem() { Text = config.GetPhrase("addtimer") };
+            menuAddTimer.Click += MenuAddTimer_Click;
+
+            var contextMenu = new System.Windows.Forms.ContextMenu();
+            contextMenu.MenuItems.AddRange(new MenuItem[] { menuAddTimer, menuQuit });
+            this.notifyIcon1.Text = this.Text = "ChronoFag Timer";
+            this.notifyIcon1.ContextMenu = contextMenu;
+
+            lblDownTitle.Text = config.LockExit
+                ? config.GetPhrase("lockmode")
+                : config.GetPhrase("freemode");
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
             timeUnitTimer = new Timer()
             {
                 Interval = 1000,
@@ -175,11 +180,11 @@ namespace ChronoFagTimer
         {
             if (customTimers.Count >= 7)
             {
-                MessageBox.Show("7 user timers are maximum", "Could not add timer", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(config.GetPhrase("maxtimerswarn"), config.GetPhrase("maxtimerswarntitle"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
-            var frm = new NewUserTimerForm();
+            var frm = new NewUserTimerForm(config);
             frm.ShowDialog(this);
         }
         private void MenuRemoveTimer_Click(object sender, EventArgs e)
@@ -374,24 +379,10 @@ namespace ChronoFagTimer
             // set label position
             if (CurrentTimeUnit is Break)
             {
-                // always on top for break window only if set in config
-                if (config.AlwaysOnTop)
-                {
-                    this.TopMost = true; 
-                }
-                // if window "on top" but config value not "on top"
-                else if (this.TopMost && !config.AlwaysOnTop)
-                {
-                    this.TopMost = false;
-                }
                 updateBreakPosition();
             }
             if (CurrentTimeUnit is Pomodoro)
             {
-                if (!this.TopMost)
-                {
-                    this.TopMost = true; // always on top for pomodoro window
-                }
                 updateTomatoPosition();
             }
             updateElementsPosition();
@@ -425,6 +416,9 @@ namespace ChronoFagTimer
 
             lblBreakTime.Left = this.Width / 2 - lblBreakTime.Width / 2;
             lblBreakTime.Top = this.Height / 2 - lblBreakTime.Height / 2;
+
+            // focus form
+            this.Activate();
         }
 
         private void startPomodoro()
@@ -460,16 +454,33 @@ namespace ChronoFagTimer
 
         private void updateElementsPosition()
         {
+            // set always on top 
+            if (!this.TopMost)
+            {
+                this.TopMost = true; 
+            }
+
             // title
             var fontSizeTitle = (IsPomodoro ? lblPomodoroTime.Font.Size : lblBreakTime.Font.Size) / 4;
-            lblTitle.Font = new Font(FontFamily.GenericSerif, fontSizeTitle);
+            lblTitle.Font = lblDownTitle.Font = new Font(FontFamily.GenericSerif, fontSizeTitle);
 
             lblTitle.Text = IsIdle
                 ? config.IdleTitle
                 : CurrentTimeUnit.Title;
             lblTitle.Left = this.Width / 2 - lblTitle.Width / 2;
             lblTitle.Top = (IsPomodoro ? lblPomodoroTime.Top : lblBreakTime.Top) / 4;
-            lblTitle.ForeColor = IsPomodoro ? config.Face.PomodoroForeground : config.Face.BreakForeground;
+            lblTitle.ForeColor = lblDownTitle.ForeColor = IsPomodoro ? config.Face.PomodoroForeground : config.Face.BreakForeground;
+
+            if (!IsPomodoro)
+            {
+                lblDownTitle.Show();
+                lblDownTitle.Left = this.Width / 2 - lblDownTitle.Width / 2;
+                lblDownTitle.Top = this.Height - (this.Height - lblBreakTime.Top) / 4;
+            }
+            else
+            {
+                lblDownTitle.Hide();
+            }
         }
 
 
@@ -714,7 +725,7 @@ namespace ChronoFagTimer
             var find = notifyIcon1.ContextMenu.MenuItems.Find("menuRemoveItem", false);
             if (find.Count() == 0)
             {
-                menuRemoveTimer = new MenuItem() { Text = "Remove Timer", Name = "menuRemoveItem" };
+                menuRemoveTimer = new MenuItem() { Text = config.GetPhrase("removetimer"), Name = "menuRemoveItem" };
                 notifyIcon1.ContextMenu.MenuItems.Add(0, menuRemoveTimer);
             }
             else
@@ -742,6 +753,11 @@ namespace ChronoFagTimer
 
         }
 
+        /// <summary>
+        /// When user timer stopped
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Utimer_StoppedEvent(object sender, EventArgs e)
         {
             var utimer = (UserTimer)sender;

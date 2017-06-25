@@ -1,6 +1,6 @@
 ﻿{
   # pomodoros and breaks
-  #  (time in minutes)
+  # (time in seconds)
   "rounds": [
     {
       "title": "Pomodoro #1",
@@ -109,7 +109,7 @@
   ],
 
 
-  "pomodoro": {
+  "worktimer": {
     # where show timer
     #  (top-right | top-left | bottom-left | bottom-right | bottom | top | left | right)
     "position": "top-left", 
@@ -123,9 +123,9 @@
     "foreground": "#ffffff"
   },
 
-  "break": {
+  "breaktimer": {
     # lock mouse and keyboard during a break (true | false)
-    "lockcontrols": true,
+    "lockexit": true,
 
     "sound": "sound/break.mp3",
 
@@ -153,4 +153,23 @@
   # break window always on top
   #  (you will not able to close it until timer ends)
   "alwaysontop": false,
+
+  "phrases": {
+	"lockmode": "Controls are locked, you have to rest",
+	"freemode": "The program can be closed by ALT+F4",
+	"quit": "Quit",
+	"addtimer": "Add Timer...",
+	"removetimer": "Remove Timer",
+	"timercaption": "Caption",
+	"timerhours": "Hours",
+	"timerminutes": "Minutes",
+	"timerseconds": "Seconds",
+	"timerstart": "Start Timer",
+	"timerempty": "(empty)",
+	"timerstoptime": "Stopped at",
+	"maxtimerswarn": "7 user timers are maximum",
+	"maxtimerswarntitle": "Could not add timer",
+  }
+
+
 }

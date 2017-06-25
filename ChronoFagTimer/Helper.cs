@@ -55,5 +55,7 @@ namespace ChronoFagTimer
         {
             return rnd.Next(min, max);
         }
+
+
     }
 }
