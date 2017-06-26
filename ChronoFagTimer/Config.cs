@@ -36,7 +36,25 @@ namespace ChronoFagTimer
                 return attributes?.Title;
             }
         }
-
+        public string ApplicationDescription
+        {
+            get
+            {
+                var attributes = (AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(),
+                    typeof(AssemblyDescriptionAttribute), false);
+                return attributes?.Description;
+            }
+        }
+        public string ApplicationCopyright
+        {
+            get
+            {
+                var attributes = (AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(),
+                    typeof(AssemblyCopyrightAttribute), false);
+                return attributes?.Copyright;
+            }
+        }
+        public string ApplicationHomePage = "https://github.com/HarpyWar/chronofag-timer";
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public Config(string fileName)

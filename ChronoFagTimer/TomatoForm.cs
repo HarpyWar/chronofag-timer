@@ -136,6 +136,9 @@ namespace ChronoFagTimer
             var menuQuit = new MenuItem() { Text = config.GetPhrase("quit") };
             menuQuit.Click += MenuQuit_Click;
 
+            var menuAbout = new MenuItem() { Text = config.GetPhrase("about") };
+            menuAbout.Click += MenuAbout_Click;
+
             var menuAutostart = new MenuItem()
             {
                 Text = config.GetPhrase("autostart"),
@@ -148,7 +151,13 @@ namespace ChronoFagTimer
             menuAddTimer.Click += MenuAddTimer_Click;
 
             var contextMenu = new System.Windows.Forms.ContextMenu();
-            contextMenu.MenuItems.AddRange(new MenuItem[] { menuAddTimer, menuAutostart, menuQuit });
+            contextMenu.MenuItems.AddRange(new MenuItem[] 
+            {
+                menuAddTimer,
+                menuAutostart,
+                menuAbout,
+                menuQuit
+            });
             this.notifyIcon1.Text = this.Text = config.ApplicationName;
             this.notifyIcon1.ContextMenu = contextMenu;
 
@@ -209,6 +218,26 @@ namespace ChronoFagTimer
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private void MenuAbout_Click(object sender, EventArgs e)
+        {
+            var content = new System.Text.StringBuilder();
+            content.AppendLine(config.ApplicationName);
+            content.AppendLine(config.ApplicationDescription);
+            content.AppendLine(config.ApplicationCopyright);
+            content.AppendLine("----------------------------------------------------");
+            content.AppendLine("License: https://www.gnu.org/licenses/gpl.html");
+            content.AppendLine();
+            content.AppendLine("Do you want to open the project home page?");
+            content.AppendLine(" " + config.ApplicationHomePage);
+
+            var result = MessageBox.Show(content.ToString(), "About " + config.ApplicationName, MessageBoxButtons.OKCancel, MessageBoxIcon.None);
+            if (result == DialogResult.OK)
+            {
+                System.Diagnostics.Process.Start(config.ApplicationHomePage);
+            }
+        }
+
 
         private void MenuQuit_Click(object sender, EventArgs e)
         {

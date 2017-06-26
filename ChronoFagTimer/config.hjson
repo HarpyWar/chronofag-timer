@@ -158,6 +158,7 @@
 	"lockmode": "Controls are locked, you have to rest",
 	"freemode": "The program can be closed by ALT+F4",
 	"autostart": "Autostart",
+	"about": "About...",
 	"quit": "Quit",
 	"addtimer": "Add Timer...",
 	"removetimer": "Remove Timer",
