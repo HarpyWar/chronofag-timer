@@ -182,12 +182,10 @@ namespace ChronoFagTimer
             timeUnitTimer.Tick += _timeUnitTimer_Elapsed;
             tomatoShowTimer.Tick += TomatoShowTimer_Tick;
 
-            var fontSizeBreak = Screen.PrimaryScreen.Bounds.Width / 20;
-            lblBreakTime.Font = new Font(FontFamily.GenericSerif, fontSizeBreak);
+            lblBreakTime.Font = new Font(FontFamily.GenericSerif, Helper.GetBreakTimerFontSize());
             lblBreakTime.ForeColor = config.Face.BreakForeground;
 
-            var fontSizeTomato  = Screen.PrimaryScreen.Bounds.Width / 50;
-            lblPomodoroTime.Font = new Font(FontFamily.GenericSerif, fontSizeTomato);
+            lblPomodoroTime.Font = new Font(FontFamily.GenericSerif, Helper.GetTimerFontSize());
             lblPomodoroTime.ForeColor = config.Face.PomodoroForeground;
 
 
@@ -362,6 +360,7 @@ namespace ChronoFagTimer
         /// <param name="e"></param>
         private void _timeUnitTimer_Elapsed(object sender, EventArgs e)
         {
+            Logger.Trace("Main timer tick");
             handleSleepLeap();
 
             // check for round finish
@@ -413,29 +412,32 @@ namespace ChronoFagTimer
 
             Counter++;
 
-            // handle alerts
-            foreach (var alert in config.Alerts)
+            if (IsPomodoro)
             {
-                if (alert.Remain == CurrentTimeUnit.CounterLimit - Counter)
+                // handle alerts
+                foreach (var alert in config.Alerts)
                 {
-                    Helper.PlaySound(alert.Sound);
-                    // show alert only for all apps except silence 
-                    if (AllowMouseEventForCurrentProcess())
+                    if (alert.Remain == CurrentTimeUnit.CounterLimit - Counter)
                     {
-                        // do not show custom timers when alert
-                        this.FadeIn(true, false);
-                    }
+                        Helper.PlaySound(alert.Sound);
+                        // show alert only for all apps except silence 
+                        if (AllowMouseEventForCurrentProcess())
+                        {
+                            // do not show custom timers when alert
+                            this.FadeIn(true, false);
+                        }
 
-                    alert.Reset();
-                    Alert = alert;
+                        alert.Reset();
+                        Alert = alert;
+                    }
                 }
-            }
-            if (Alert != null)
-            {
-                Alert.Elapsed++;
-                if (Alert.Elapsed > Alert.Duration)
+                if (Alert != null)
                 {
-                    Alert = null;
+                    Alert.Elapsed++;
+                    if (Alert.Elapsed > Alert.Duration)
+                    {
+                        Alert = null;
+                    }
                 }
             }
 
@@ -459,12 +461,13 @@ namespace ChronoFagTimer
         DateTime? lastActiveTime = null;
         private void handleSleepLeap()
         {
+            var now = DateTime.Now;
             if (lastActiveTime == null)
             {
                 // first assign
-                lastActiveTime = DateTime.Now;
+                lastActiveTime = now;
             }
-            var diff = (DateTime.Now - (DateTime)lastActiveTime).TotalSeconds;
+            var diff = (int)(now - (DateTime)lastActiveTime).TotalSeconds;
 
             // if was leap
             if (diff > config.IdleTime)
@@ -484,7 +487,8 @@ namespace ChronoFagTimer
                     }
                 }
             }
-            lastActiveTime = DateTime.Now;
+            // set to current date
+            lastActiveTime = now;
         }
 
         private void startBreak()
@@ -495,8 +499,6 @@ namespace ChronoFagTimer
             Helper.PlaySound(config.BreakSound);
 
             // update form size equal to screen size
-            this.Width = Screen.PrimaryScreen.Bounds.Width;
-            this.Height = Screen.PrimaryScreen.Bounds.Height;
             this.Top = this.Left = 0;
             this.BackColor = config.Face.BreakBackground;
 
@@ -506,18 +508,21 @@ namespace ChronoFagTimer
             updateBreakPosition();
             updateElementsPosition();
 
-
-            this.FadeIn();
+            this.FadeIn(false);
         }
         private void updateBreakPosition()
         {
+            // focus form
+            this.Activate();
+
+            // update size to make sure all the screen always filled
+            this.Width = Screen.PrimaryScreen.WorkingArea.Width;
+            this.Height = Screen.PrimaryScreen.WorkingArea.Height;
+
             lblBreakTime.Text = Helper.GetTimeElapsedString(CurrentTimeUnit.CounterLimit, Counter);
 
             lblBreakTime.Left = this.Width / 2 - lblBreakTime.Width / 2;
             lblBreakTime.Top = this.Height / 2 - lblBreakTime.Height / 2;
-
-            // focus form
-            this.Activate();
         }
 
         private void startPomodoro()
@@ -527,8 +532,9 @@ namespace ChronoFagTimer
 
             this.FadeOut();
 
-            this.Width = Screen.PrimaryScreen.Bounds.Width / 8;
-            this.Height = Screen.PrimaryScreen.Bounds.Height / 8;
+            var size = Helper.GetFormSize();
+            this.Width = size.X;
+            this.Height = size.Y;
             var pos = getPomodoroPosition();
             this.Top = pos.X;
             this.Left = pos.Y;
@@ -560,7 +566,7 @@ namespace ChronoFagTimer
             }
 
             // title
-            var fontSizeTitle = (IsPomodoro ? lblPomodoroTime.Font.Size : lblBreakTime.Font.Size) / 4;
+            var fontSizeTitle = IsPomodoro ? Helper.GetTitleFontSize() : Helper.GetBreakTitleFontSize();
             lblTitle.Font = lblDownTitle.Font = new Font(FontFamily.GenericSerif, fontSizeTitle);
 
             lblTitle.Text = IsIdle
@@ -667,6 +673,11 @@ namespace ChronoFagTimer
         /// <param name="immediate">without animation</param>
         public void FadeIn(bool immediate = false, bool customTimers = true)
         {
+            if (customTimers)
+            {
+                toggleUserTimers(true);
+            }
+
             // do nothing if already visible
             if (this.Visibility)
             {
@@ -675,11 +686,6 @@ namespace ChronoFagTimer
             this.Opacity = 0;
             this.Left = this.Top = 0; //instead this.Show(); which toggle focus
             Logger.Trace("Show");
-
-            if (customTimers)
-            {
-                toggleUserTimers(true);
-            }
 
 
             this.Visibility = true;
@@ -724,9 +730,10 @@ namespace ChronoFagTimer
                 this.Opacity = opacity;
                 this.Refresh();
             }
-            complete:
+        complete:
             
-            this.Left = this.Top = -this.Width; //instead this.Hide(); which toggle focus
+            this.Left = -this.Width; //instead this.Hide(); which toggle focus
+            this.Top = -this.Height; 
             this.Visibility = false;
         }
 
@@ -833,14 +840,14 @@ namespace ChronoFagTimer
             }
             // add timer menu item 
             var menuTimerItem = new MenuItem() {
-                Text = title,
+                Text = !string.IsNullOrEmpty(title) ? title : config.GetPhrase("timerempty"),
                 Name = key
             };
             menuTimerItem.Click += MenuRemoveTimer_Click;
             menuRemoveTimer.MenuItems.Add(menuTimerItem);
 
             // add timer
-            var utimer = new UserTimer(key, title, seconds, config);
+            var utimer = new UserTimer(key, title, seconds, config, this);
             utimer.StoppedEvent += Utimer_StoppedEvent;
             customTimers.Add(key, utimer);
 

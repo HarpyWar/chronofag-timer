@@ -32,7 +32,7 @@ namespace ChronoFagTimer
         private void btnStart_Click(object sender, EventArgs e)
         {
             var seconds = txtHours.Value * 60 * 60 + txtMinutes.Value * 60 + txtSeconds.Value;
-            var title = !string.IsNullOrEmpty(txtTitle.Text) ? txtTitle.Text : config.GetPhrase("timerempty");
+            var title = txtTitle.Text;
             ((TomatoForm)Owner).AddCustomTimer(title, (int)seconds);
             this.Close();
         }

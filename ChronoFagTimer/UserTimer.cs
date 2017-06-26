@@ -32,6 +32,7 @@ namespace ChronoFagTimer
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private Form form;
+        private TomatoForm parentForm;
         private Label lblTitle, lblDownTitle, lblTime;
         private Timer timer;
 
@@ -98,18 +99,20 @@ namespace ChronoFagTimer
         /// 
         /// </summary>
         /// <param name="seconds">When timer should be stopped</param>
-        public UserTimer(string key, string title, int seconds, Config config)
+        public UserTimer(string key, string title, int seconds, Config config, TomatoForm parentForm)
         {
+            this.parentForm = parentForm;
             this.config = config;
             this.Seconds = seconds;
             this.Key = key;
 
+            var size = Helper.GetFormSize();
             // init form
             form = new Form()
             {
                 FormBorderStyle = FormBorderStyle.None,
-                Width = Screen.PrimaryScreen.Bounds.Width / 8,
-                Height = Screen.PrimaryScreen.Bounds.Height / 8,
+                Width = size.X,
+                Height = size.Y,
                 Cursor = Cursors.Hand,
                 TopMost = true,
                 ShowInTaskbar = false
@@ -137,12 +140,10 @@ namespace ChronoFagTimer
 
 
             // set font size
-            var fontSize = Screen.PrimaryScreen.Bounds.Width / 50;
-            lblTime.Font = new Font(FontFamily.GenericSerif, fontSize);
+            lblTime.Font = new Font(FontFamily.GenericSerif, Helper.GetTimerFontSize());
 
-            var fontSizeTitle = lblTime.Font.Size / 4;
-            lblTitle.Font = lblDownTitle.Font = new Font(FontFamily.GenericSerif, fontSizeTitle);
-
+            lblTitle.Font = new Font(FontFamily.GenericSerif, Helper.GetTitleFontSize());
+            lblDownTitle.Font = new Font(FontFamily.GenericSerif, Helper.GetDownTitleFontSize());
 
             // set colors
             lblTime.ForeColor = lblTitle.ForeColor = lblDownTitle.ForeColor = config.Face.UserTimerForeground;
@@ -176,12 +177,16 @@ namespace ChronoFagTimer
         {
             if (Counter == config.UserTimerShowFirstTime)
             {
-                Hide(); 
+                // do not hide if parent tomato form is now visible
+                if (!parentForm.Visibility)
+                {
+                    Hide();
+                }
             }
 
             Counter++;
 
-            Logger.Trace("User timer counter {0}: ", Key, Counter);
+            Logger.Trace("User timer counter {0}: {1}", Key, Counter);
 
             // when elapsed then stop timer and show form
             if (Elapsed)
@@ -236,7 +241,11 @@ namespace ChronoFagTimer
                 var pos = getFormPosition(ID, form.Height);
                 form.Left = pos.X;
                 form.Top = pos.Y;
-                form.TopMost = true;
+                if (!form.TopMost)
+                {
+                    form.TopMost = true;
+                }
+
 
                 updateElementsPosition();
                 Logger.Trace("Show user timer " + lblTitle.Text);

@@ -18,6 +18,8 @@
 using NLog;
 using System;
 using NAudio.Wave;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace ChronoFagTimer
 {
@@ -56,6 +58,58 @@ namespace ChronoFagTimer
             return rnd.Next(min, max);
         }
 
+        public static Point GetFormSize()
+        {
+            return new Point
+            (
+                SystemInformation.VirtualScreen.Width / GetTimersOnScreen(false),
+                SystemInformation.VirtualScreen.Height / GetTimersOnScreen(false)
+            );
+        }
+        public static float GetTitleFontSize()
+        {
+            return GetTimerFontSize() / 3;
+        }
+        public static float GetDownTitleFontSize()
+        {
+            return GetTimerFontSize() / 4;
+        }
+        public static float GetBreakTitleFontSize()
+        {
+            return GetTitleFontSize() * 2;
+        }
+        public static float GetTimerFontSize()
+        {
+            return (float)(Screen.PrimaryScreen.Bounds.Width / GetTimersOnScreen(false) / 6.4);
+        }
+        public static float GetBreakTimerFontSize()
+        {
+            return (float)(Screen.PrimaryScreen.Bounds.Width / GetTimersOnScreen(false) / 2.5);
+        }
 
+        /// <summary>
+        /// Max timers on screen
+        /// </summary>
+        /// <returns></returns>
+        public static int GetTimersOnScreen(bool round = true)
+        {
+            var screenSize = Screen.PrimaryScreen.Bounds;
+            Logger.Trace("Screen size {0}x{1}", screenSize.Width, screenSize.Height);
+            var k = (int)Math.Ceiling((double)screenSize.Height / screenDivider);
+
+            //var screenSize = WinApi.Screen.GetScreenSize();
+            //Logger.Trace("Screen size {0}x{1}", screenSize.X, screenSize.Y);
+            //var k = screenSize.Y / screenDivider;
+            if (round)
+            {
+                //k = k - (k % 2);
+            }
+            return k;
+        }
+
+        /// <summary>
+        /// 200 px is good vertical size of timer
+        /// </summary>
+        const int screenDivider = 200;
     }
 }
