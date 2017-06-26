@@ -15,6 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -43,7 +44,35 @@ namespace ChronoFagTimer
         }
 
 
+        private static string runPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
+        public static void SetStartup(string appName, string appPath, bool check)
+        {
+            using (var rk = Registry.CurrentUser.OpenSubKey(runPath, true))
+            {
+                if (check)
+                    rk.SetValue(appName, appPath);
+                else
+                    rk.DeleteValue(appName, false);
+            }
+        }
 
+        public static bool GetStartup(string appName, string appPath)
+        {
+            using (var rk = Registry.CurrentUser.OpenSubKey(runPath, false))
+            {
+                var val = rk.GetValue(appName);
+                if (val != null)
+                {
+                    // if bad path then return false
+                    if (val.ToString() != appPath)
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
 
         /// <summary>
         /// Helps to find the idle time spent since the last user input

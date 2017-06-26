@@ -157,6 +157,7 @@
   "phrases": {
 	"lockmode": "Controls are locked, you have to rest",
 	"freemode": "The program can be closed by ALT+F4",
+	"autostart": "Autostart",
 	"quit": "Quit",
 	"addtimer": "Add Timer...",
 	"removetimer": "Remove Timer",

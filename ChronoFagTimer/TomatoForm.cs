@@ -136,12 +136,20 @@ namespace ChronoFagTimer
             var menuQuit = new MenuItem() { Text = config.GetPhrase("quit") };
             menuQuit.Click += MenuQuit_Click;
 
+            var menuAutostart = new MenuItem()
+            {
+                Text = config.GetPhrase("autostart"),
+                Name = "menuAutostart",
+                Checked = WinApi.GetStartup(config.ApplicationName, Application.ExecutablePath)
+            };
+            menuAutostart.Click += MenuAutostart_Click;
+
             var menuAddTimer = new MenuItem() { Text = config.GetPhrase("addtimer") };
             menuAddTimer.Click += MenuAddTimer_Click;
 
             var contextMenu = new System.Windows.Forms.ContextMenu();
-            contextMenu.MenuItems.AddRange(new MenuItem[] { menuAddTimer, menuQuit });
-            this.notifyIcon1.Text = this.Text = "ChronoFag Timer";
+            contextMenu.MenuItems.AddRange(new MenuItem[] { menuAddTimer, menuAutostart, menuQuit });
+            this.notifyIcon1.Text = this.Text = config.ApplicationName;
             this.notifyIcon1.ContextMenu = contextMenu;
 
             lblDownTitle.Text = config.LockExit
@@ -175,6 +183,31 @@ namespace ChronoFagTimer
 
 
             startPomodoro();
+        }
+
+        private void MenuAutostart_Click(object sender, EventArgs e)
+        {
+            // toggle startup
+            try
+            {
+                var check = false;
+                if (WinApi.GetStartup(config.ApplicationName, Application.ExecutablePath))
+                {
+                    WinApi.SetStartup(config.ApplicationName, Application.ExecutablePath, false);
+                    Logger.Debug("Unet startup");
+                }
+                else
+                {
+                    WinApi.SetStartup(config.ApplicationName, Application.ExecutablePath, true);
+                    check = true;
+                    Logger.Debug("Set startup");
+                }
+                notifyIcon1.ContextMenu.MenuItems.Find("menuAutostart", false).First().Checked = check;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void MenuQuit_Click(object sender, EventArgs e)

@@ -21,11 +21,23 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 
 namespace ChronoFagTimer
 {
     public class Config
     {
+        public string ApplicationName
+        {
+            get
+            {
+                var attributes = (AssemblyTitleAttribute)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), 
+                    typeof(AssemblyTitleAttribute), false);
+                return attributes?.Title;
+            }
+        }
+
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public Config(string fileName)
         {
