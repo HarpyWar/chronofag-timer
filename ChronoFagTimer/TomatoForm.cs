@@ -524,7 +524,7 @@ namespace ChronoFagTimer
             this.Width = Screen.PrimaryScreen.WorkingArea.Width;
             this.Height = Screen.PrimaryScreen.WorkingArea.Height;
 
-            lblBreakTime.Text = Helper.GetTimeElapsedString(CurrentTimeUnit.CounterLimit, Counter);
+            lblBreakTime.Text = Helper.GetTimeElapsedString(Counter, CurrentTimeUnit.CounterLimit);
 
             lblBreakTime.Left = this.Width / 2 - lblBreakTime.Width / 2;
             lblBreakTime.Top = this.Height / 2 - lblBreakTime.Height / 2;
@@ -562,7 +562,7 @@ namespace ChronoFagTimer
         }
         private void updateTomatoPosition()
         {
-            lblPomodoroTime.Text = Helper.GetTimeElapsedString(CurrentTimeUnit.CounterLimit, Counter);
+            lblPomodoroTime.Text = Helper.GetTimeElapsedString(Counter, CurrentTimeUnit.CounterLimit);
 
             lblPomodoroTime.Left = this.Width / 2 - lblPomodoroTime.Width / 2;
             lblPomodoroTime.Top = this.Height / 2 - lblPomodoroTime.Height / 2;

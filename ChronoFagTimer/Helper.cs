@@ -50,7 +50,11 @@ namespace ChronoFagTimer
         public static string GetTimeElapsedString(int counter, int limit)
         {
             var time = TimeSpan.FromSeconds(limit - counter);
-            return time.ToString(@"mm\:ss");
+            var hours = (double)(limit - counter) / 60 / 60;
+            var timeStr = hours >= 1
+                ? time.ToString(@"hh\:mm\:ss") // show hours if exist
+                : time.ToString(@"mm\:ss");
+            return timeStr;
         }
 
         public static int GetRandom(int min, int max)
@@ -62,8 +66,8 @@ namespace ChronoFagTimer
         {
             return new Point
             (
-                SystemInformation.VirtualScreen.Width / GetTimersOnScreen(false),
-                SystemInformation.VirtualScreen.Height / GetTimersOnScreen(false)
+                SystemInformation.VirtualScreen.Width / GetTimersOnScreen(),
+                SystemInformation.VirtualScreen.Height / GetTimersOnScreen()
             );
         }
         public static float GetTitleFontSize()
@@ -80,30 +84,22 @@ namespace ChronoFagTimer
         }
         public static float GetTimerFontSize()
         {
-            return (float)(Screen.PrimaryScreen.Bounds.Width / GetTimersOnScreen(false) / 6.4);
+            return (float)(Screen.PrimaryScreen.Bounds.Width / GetTimersOnScreen() / 6.4);
         }
         public static float GetBreakTimerFontSize()
         {
-            return (float)(Screen.PrimaryScreen.Bounds.Width / GetTimersOnScreen(false) / 2.5);
+            return (float)(Screen.PrimaryScreen.Bounds.Width / GetTimersOnScreen() / 2.5);
         }
 
         /// <summary>
         /// Max timers on screen
         /// </summary>
         /// <returns></returns>
-        public static int GetTimersOnScreen(bool round = true)
+        public static int GetTimersOnScreen()
         {
             var screenSize = Screen.PrimaryScreen.Bounds;
             Logger.Trace("Screen size {0}x{1}", screenSize.Width, screenSize.Height);
             var k = (int)Math.Ceiling((double)screenSize.Height / screenDivider);
-
-            //var screenSize = WinApi.Screen.GetScreenSize();
-            //Logger.Trace("Screen size {0}x{1}", screenSize.X, screenSize.Y);
-            //var k = screenSize.Y / screenDivider;
-            if (round)
-            {
-                //k = k - (k % 2);
-            }
             return k;
         }
 

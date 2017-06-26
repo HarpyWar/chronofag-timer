@@ -193,7 +193,11 @@ namespace ChronoFagTimer
             {
                 Stop();
 
-                lblDownTitle.Text = string.Format("{0} {1}:{2}:{3}", config.GetPhrase("timerstoptime"), DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+                lblDownTitle.Text = string.Format("{0} {1}:{2}:{3}", 
+                    config.GetPhrase("timerstoptime"), 
+                    DateTime.Now.Hour.ToString().PadLeft(2, '0'), 
+                    DateTime.Now.Minute.ToString().PadLeft(2, '0'), 
+                    DateTime.Now.Second.ToString().PadLeft(2, '0'));
                 Helper.PlaySound(config.UserTimerSound);
                 Show();
             }
@@ -215,7 +219,7 @@ namespace ChronoFagTimer
             }
 
             // timer
-            lblTime.Text = Helper.GetTimeElapsedString(Seconds, Counter);
+            lblTime.Text = Helper.GetTimeElapsedString(Counter, Seconds);
             lblTime.Left = form.Width / 2 - lblTime.Width / 2;
             lblTime.Top = form.Height / 2 - lblTime.Height / 2;
 
