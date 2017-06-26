@@ -493,6 +493,11 @@ namespace ChronoFagTimer
 
         private void startBreak()
         {
+            if (config.LockExit)
+            {
+                Logger.Debug("Lock keyboard");
+                WinApi.InterceptKeys.LockKeyboard();
+            }
             this.FadeOut(true);
 
             Logger.Info("Start break[{0}] ({1})", CurrentRound, CurrentTimeUnit.Title);
@@ -527,6 +532,12 @@ namespace ChronoFagTimer
 
         private void startPomodoro()
         {
+            if (config.LockExit)
+            {
+                Logger.Debug("Unlock keyboard");
+                WinApi.InterceptKeys.UnlockKeyboard();
+            }
+
             Logger.Info("Start pomodoro[{0}|{1}] ({2})", CurrentRound, pomodoroCounter, CurrentTimeUnit.Title);
             Helper.PlaySound(config.PomodoroSound);
 
@@ -570,7 +581,7 @@ namespace ChronoFagTimer
             lblTitle.Font = lblDownTitle.Font = new Font(FontFamily.GenericSerif, fontSizeTitle);
 
             lblTitle.Text = IsIdle
-                ? config.IdleTitle
+                ? config.GetPhrase("idletitle")
                 : CurrentTimeUnit.Title;
             lblTitle.Left = this.Width / 2 - lblTitle.Width / 2;
             lblTitle.Top = (IsPomodoro ? lblPomodoroTime.Top : lblBreakTime.Top) / 4;

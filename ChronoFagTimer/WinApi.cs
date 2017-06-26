@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 
 namespace ChronoFagTimer
 {
-    class WinApi
+    public class WinApi
     {
         [DllImport("user32.dll")]
         public static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out uint ProcessId);
@@ -73,6 +73,78 @@ namespace ChronoFagTimer
             }
             return false;
         }
+
+
+        /// <summary>
+        /// http://blogs.msdn.com/toub/archive/2006/05/03/589423.aspx
+        /// </summary>
+        public class InterceptKeys
+        {
+            private const int WH_KEYBOARD_LL = 13;
+            private const int WM_KEYDOWN = 0x0100;
+            private static LowLevelKeyboardProc _proc = HookCallback;
+            private static IntPtr _hookID = IntPtr.Zero;
+
+
+            public static void LockKeyboard()
+            {
+                _hookID = SetHook(_proc);
+            }
+            public static void UnlockKeyboard()
+            {
+                UnhookWindowsHookEx(_hookID);
+            }
+
+            private static IntPtr SetHook(LowLevelKeyboardProc proc)
+            {
+                using (Process curProcess = Process.GetCurrentProcess())
+                using (ProcessModule curModule = curProcess.MainModule)
+                {
+                    return SetWindowsHookEx(WH_KEYBOARD_LL, proc,
+                        GetModuleHandle(curModule.ModuleName), 0);
+                }
+            }
+
+            private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+            private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+            {
+                // eat all keys
+                return (IntPtr)1;
+            }
+
+            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+
+            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+            [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            private static extern IntPtr GetModuleHandle(string lpModuleName);
+        }
+
+
+        public class WindowPos
+        {
+            private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+            private const UInt32 SWP_NOSIZE = 0x0001;
+            private const UInt32 SWP_NOMOVE = 0x0002;
+            private const UInt32 TOPMOST_FLAGS = SWP_NOMOVE | SWP_NOSIZE;
+
+            [DllImport("user32.dll")]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+            public static void BringToFront(IntPtr handle)
+            {
+                SetWindowPos(handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
+            }
+        }
+
 
         /// <summary>
         /// Helps to find the idle time spent since the last user input

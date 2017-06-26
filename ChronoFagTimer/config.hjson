@@ -145,17 +145,15 @@
 
   # seconds of inactivity when idle mode will be enabled
   #  (set 0 to disable)
-  "idletime": 5,
-  
-  # title for idle
-  "idle_title": "IDLE MODE",
+  "idletime": 60,
 
   # break window always on top
   #  (you will not able to close it until timer ends)
   "alwaysontop": false,
 
   "phrases": {
-	"lockmode": "Controls are locked, you have to rest",
+	"idletitle": "IDLE MODE",
+	"lockmode": "Keyboard locked up, you have to rest",
 	"freemode": "The program can be closed by ALT+F4",
 	"autostart": "Autostart",
 	"about": "About...",
