@@ -131,6 +131,7 @@ namespace ChronoFagTimer
 
 
             this.Width = this.Height = 0;
+            this.Hide();
 
             // fill tray context menutimerstoptime
             var menuQuit = new MenuItem() { Text = config.GetPhrase("quit") };
@@ -190,6 +191,7 @@ namespace ChronoFagTimer
 
 
             startPomodoro();
+            this.WindowState = FormWindowState.Normal;
         }
 
         private void MenuAutostart_Click(object sender, EventArgs e)
@@ -521,8 +523,8 @@ namespace ChronoFagTimer
             this.Activate();
 
             // update size to make sure all the screen always filled
-            this.Width = Screen.PrimaryScreen.WorkingArea.Width;
-            this.Height = Screen.PrimaryScreen.WorkingArea.Height;
+            this.Width = Screen.PrimaryScreen.Bounds.Width;
+            this.Height = Screen.PrimaryScreen.Bounds.Height;
 
             lblBreakTime.Text = Helper.GetTimeElapsedString(Counter, CurrentTimeUnit.CounterLimit);
 
@@ -543,9 +545,6 @@ namespace ChronoFagTimer
 
             this.FadeOut();
 
-            var size = Helper.GetFormSize();
-            this.Width = size.X;
-            this.Height = size.Y;
             var pos = getPomodoroPosition();
             this.Top = pos.X;
             this.Left = pos.Y;
@@ -562,6 +561,11 @@ namespace ChronoFagTimer
         }
         private void updateTomatoPosition()
         {
+            // update form size to make sure it always correct
+            var size = Helper.GetFormSize();
+            this.Width = size.X;
+            this.Height = size.Y;
+
             lblPomodoroTime.Text = Helper.GetTimeElapsedString(Counter, CurrentTimeUnit.CounterLimit);
 
             lblPomodoroTime.Left = this.Width / 2 - lblPomodoroTime.Width / 2;
