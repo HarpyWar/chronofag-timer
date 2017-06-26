@@ -98,7 +98,6 @@ namespace ChronoFagTimer
         public static int GetTimersOnScreen()
         {
             var screenSize = Screen.PrimaryScreen.Bounds;
-            Logger.Trace("Screen size {0}x{1}", screenSize.Width, screenSize.Height);
             var k = (int)Math.Ceiling((double)screenSize.Height / screenDivider);
             return k;
         }

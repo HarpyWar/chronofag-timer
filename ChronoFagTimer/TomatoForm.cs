@@ -134,7 +134,7 @@ namespace ChronoFagTimer
             this.Hide();
 
             // fill tray context menutimerstoptime
-            var menuQuit = new MenuItem() { Text = config.GetPhrase("quit") };
+            var menuQuit = new MenuItem() { Text = config.LockMode ? config.GetPhrase("quitlocked") : config.GetPhrase("quit"), Enabled = !config.LockMode };
             menuQuit.Click += MenuQuit_Click;
 
             var menuAbout = new MenuItem() { Text = config.GetPhrase("about") };
@@ -162,7 +162,7 @@ namespace ChronoFagTimer
             this.notifyIcon1.Text = this.Text = config.ApplicationName;
             this.notifyIcon1.ContextMenu = contextMenu;
 
-            lblDownTitle.Text = config.LockExit
+            lblDownTitle.Text = config.LockMode
                 ? config.GetPhrase("lockmode")
                 : config.GetPhrase("freemode");
         }
@@ -495,7 +495,7 @@ namespace ChronoFagTimer
 
         private void startBreak()
         {
-            if (config.LockExit)
+            if (config.LockMode)
             {
                 Logger.Debug("Lock keyboard");
                 WinApi.InterceptKeys.LockKeyboard();
@@ -534,7 +534,7 @@ namespace ChronoFagTimer
 
         private void startPomodoro()
         {
-            if (config.LockExit)
+            if (config.LockMode)
             {
                 Logger.Debug("Unlock keyboard");
                 WinApi.InterceptKeys.UnlockKeyboard();

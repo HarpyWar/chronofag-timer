@@ -140,7 +140,7 @@ namespace ChronoFagTimer
             UserTimerShowFirstTime = jobj["usertimer"]["showfirsttime"];
 
             IdleTime = jobj["idletime"];
-            LockExit = jobj["breaktimer"]["lockexit"];
+            LockMode = jobj["breaktimer"]["lockmode"];
         }
 
         public List<TimeUnit> Times { get; private set; }
@@ -164,7 +164,7 @@ namespace ChronoFagTimer
         public string UserTimerSound { get; private set; }
         
         public int IdleTime { get; private set; }
-        public bool LockExit { get; private set; }
+        public bool LockMode { get; private set; }
 
         public int UserTimerShowFirstTime { get; private set; }
 

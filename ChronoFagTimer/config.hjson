@@ -88,14 +88,14 @@
   # show pomodoro timer when remain X seconds for Y duration
   "alerts": [
     {
-        "remain": 300,
-        "duration": 3,
-        "sound": null
+      "remain": 300,
+      "duration": 4,
+      "sound": null
     },
     {
-        "remain": 60,
-        "duration": 3,
-        "sound": "sound/alert.mp3"
+      "remain": 60,
+      "duration": 4,
+      "sound": "sound/alert.mp3"
     }
   ],
 
@@ -103,7 +103,7 @@
   #  when mouse move near a corner, and do not show alerts (only play sound)
   #  In most cases here should be games that are running in full screen
   "silence_apps": [
-    "War3",
+	  "War3",
 	  "starcraft",
 	  "StarCraft II"
   ],
@@ -124,8 +124,8 @@
   },
 
   "breaktimer": {
-    # lock mouse and keyboard during a break (true | false)
-    "lockexit": true,
+    # lock keyboard during a break without a possibility to exit (true | false)
+    "lockmode": false,
 
     "sound": "sound/break.mp3",
 
@@ -154,6 +154,7 @@
 	"autostart": "Autostart",
 	"about": "About...",
 	"quit": "Quit",
+	"quitlocked": "Quit (lock mode)",
 	"addtimer": "Add Timer...",
 	"removetimer": "Remove Timer",
 	"timercaption": "Caption",
