@@ -8,7 +8,9 @@ By default there is a classical pomodoro time of 25 minutes and break of 5 minut
 
 ![Pomodoro Timer](http://i.imgur.com/xfjKEBF.png)
 
-This timer differs from similar others by fully automation and locking a screen when a break. So you don't need manually click start or regulate a time.
+This timer differs from similar others by fully automation and locking a screen when a break. So you don't need manually click start or regulate a time 
+
+*By default it's possible to close the program by ALT+F4. You can enable lock mode by setting up `lockmode = true` in [config.hjson](https://github.com/HarpyWar/chronofag-timer/blob/master/ChronoFagTimer/config.hjson#L128). After that you will not able to close it (only kill a process in task manager).*
 
 ![Break Timer](http://i.imgur.com/2J7WDMd.png)
 
