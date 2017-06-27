@@ -111,6 +111,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="App.Debug.config" Condition=" '$(Configuration)' == 'Debug' ">
+      <DependentUpon>App.config</DependentUpon>
+    </None>
+    <None Include="App.Release.config" Condition=" '$(Configuration)' == 'Release' ">
+      <DependentUpon>App.config</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="config.hjson">
@@ -121,6 +127,12 @@
     <Content Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>copy "$(ProjectDir)App.$(ConfigurationName).config" "$(ProjectDir)App.config"</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>del "$(ProjectDir)App.config"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
