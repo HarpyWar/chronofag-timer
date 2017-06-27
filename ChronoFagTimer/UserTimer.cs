@@ -194,7 +194,7 @@ namespace ChronoFagTimer
                 Stop();
 
                 lblDownTitle.Text = string.Format("{0} {1}:{2}:{3}", 
-                    config.GetPhrase("timerstoptime"), 
+                    config.GetPhrase("timerelapsed"), 
                     DateTime.Now.Hour.ToString().PadLeft(2, '0'), 
                     DateTime.Now.Minute.ToString().PadLeft(2, '0'), 
                     DateTime.Now.Second.ToString().PadLeft(2, '0'));

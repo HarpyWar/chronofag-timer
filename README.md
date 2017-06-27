@@ -4,13 +4,13 @@
 
 This is a productivity timer inspired by a [pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique).
 
-By default there is a classical pomodoro time of 25 minutes and break of 5 minutes. After first two hours break of 10 minutes, and after 4 hours break of 30 minutes (these settings can be changed in `config.hjson`).
+By default there is a classical pomodoro time of 25 minutes and break of 5 minutes. After first 4 pomodoros there is a break of 15 minutes and after 8 pomodoros &mdash; a break of 30 minutes (these settings can be changed in `config.hjson`).
 
 ![Pomodoro Timer](http://i.imgur.com/xfjKEBF.png)
 
 This timer differs from similar others by fully automation and locking a screen when a break. So you don't need manually click start or regulate a time 
 
-*By default it's possible to close the program by ALT+F4. You can enable lock mode by setting up `lockmode = true` in [config.hjson](https://github.com/HarpyWar/chronofag-timer/blob/master/ChronoFagTimer/config.hjson#L128). After that you will not able to close it (only kill a process in task manager).*
+*You can enable lock mode by setting up `lockkeyboard = true` in [config.hjson](https://github.com/HarpyWar/chronofag-timer/blob/master/ChronoFagTimer/config.hjson#L128). After that you will not able to close the program (only kill a process in task manager).*
 
 ![Break Timer](http://i.imgur.com/2J7WDMd.png)
 
@@ -29,6 +29,15 @@ You will always see when a timer is elapsed, so you can't miss important things 
 * Adjustment of time after AFK (including a computer sleep mode)
 * Show timer notifications for predefined time before it elapsed
 * Sound notifications
-* Lock screen by force during break time (option lockcontrols). 
+* Lock screen by force during break time (option `lockkeyboard`). 
 * Add single user timers
 * Customizable color style
+
+
+## Donation
+
+If this timer was valuable to you, please donate funds to author
+* [Paypal](https://www.paypal.me/harpywar)
+* Yandex.Money `4100176229161`
+* Webmoney  `R306333557133` `Z170879613351`
+* Bitcoin `1LoiGSsasrzo8MS51kzFfAMBAhV7xUQDF8`

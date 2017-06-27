@@ -54,6 +54,14 @@ namespace ChronoFagTimer
                 return attributes?.Copyright;
             }
         }
+        public string Version
+        {
+            get
+            {
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();   
+            }
+        }
+
         public string ApplicationHomePage = "https://github.com/HarpyWar/chronofag-timer";
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -140,7 +148,7 @@ namespace ChronoFagTimer
             UserTimerShowFirstTime = jobj["usertimer"]["showfirsttime"];
 
             IdleTime = jobj["idletime"];
-            LockMode = jobj["breaktimer"]["lockmode"];
+            LockKeyboard = jobj["breaktimer"]["lockkeyboard"];
         }
 
         public List<TimeUnit> Times { get; private set; }
@@ -164,7 +172,7 @@ namespace ChronoFagTimer
         public string UserTimerSound { get; private set; }
         
         public int IdleTime { get; private set; }
-        public bool LockMode { get; private set; }
+        public bool LockKeyboard { get; private set; }
 
         public int UserTimerShowFirstTime { get; private set; }
 

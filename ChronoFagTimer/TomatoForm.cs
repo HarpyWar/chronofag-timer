@@ -118,7 +118,7 @@ namespace ChronoFagTimer
         {
             InitializeComponent();
 
-            var configFile = "config.hjson";
+            var configFile = System.IO.Path.Combine(Application.StartupPath, "config.hjson");
             try
             {
                 config = new Config(configFile);
@@ -133,8 +133,8 @@ namespace ChronoFagTimer
             this.Width = this.Height = 0;
             this.Hide();
 
-            // fill tray context menutimerstoptime
-            var menuQuit = new MenuItem() { Text = config.LockMode ? config.GetPhrase("quitlocked") : config.GetPhrase("quit"), Enabled = !config.LockMode };
+            // fill tray context
+            var menuQuit = new MenuItem() { Text = config.LockKeyboard ? config.GetPhrase("quitlocked") : config.GetPhrase("quit"), Enabled = !config.LockKeyboard };
             menuQuit.Click += MenuQuit_Click;
 
             var menuAbout = new MenuItem() { Text = config.GetPhrase("about") };
@@ -162,7 +162,7 @@ namespace ChronoFagTimer
             this.notifyIcon1.Text = this.Text = config.ApplicationName;
             this.notifyIcon1.ContextMenu = contextMenu;
 
-            lblDownTitle.Text = config.LockMode
+            lblDownTitle.Text = config.LockKeyboard
                 ? config.GetPhrase("lockmode")
                 : config.GetPhrase("freemode");
         }
@@ -192,6 +192,9 @@ namespace ChronoFagTimer
 
             startPomodoro();
             this.WindowState = FormWindowState.Normal;
+
+            updateTomatoPosition();
+            updateElementsPosition();
         }
 
         private void MenuAutostart_Click(object sender, EventArgs e)
@@ -222,7 +225,7 @@ namespace ChronoFagTimer
         private void MenuAbout_Click(object sender, EventArgs e)
         {
             var content = new System.Text.StringBuilder();
-            content.AppendLine(config.ApplicationName);
+            content.AppendLine(string.Format("{0} v{1}", config.ApplicationName, config.Version));
             content.AppendLine(config.ApplicationDescription);
             content.AppendLine(config.ApplicationCopyright);
             content.AppendLine("----------------------------------------------------");
@@ -336,8 +339,8 @@ namespace ChronoFagTimer
         {
             if (IsPomodoro)
             {
-                // if mouse cursor in hot area
-                if (mouseShowPomodoro() || IsIdle)
+                // if mouse cursor in hot area, or idle, or first 5 seconds of pomodoro
+                if (mouseShowPomodoro() || IsIdle ||  Counter < 5)
                 {
                     if (AllowMouseEventForCurrentProcess())
                     {
@@ -495,7 +498,7 @@ namespace ChronoFagTimer
 
         private void startBreak()
         {
-            if (config.LockMode)
+            if (config.LockKeyboard)
             {
                 Logger.Debug("Lock keyboard");
                 WinApi.InterceptKeys.LockKeyboard();
@@ -534,7 +537,7 @@ namespace ChronoFagTimer
 
         private void startPomodoro()
         {
-            if (config.LockMode)
+            if (config.LockKeyboard)
             {
                 Logger.Debug("Unlock keyboard");
                 WinApi.InterceptKeys.UnlockKeyboard();
