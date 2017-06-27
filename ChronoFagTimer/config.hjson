@@ -118,6 +118,8 @@
     "mousearea": "10",
 
     "sound": "sound/pomodoro.mp3",
+	# show during X seconds on first start or after a break
+    "showfirsttime": 4,
 
     "background": "#CB2028",
     "foreground": "#ffffff"

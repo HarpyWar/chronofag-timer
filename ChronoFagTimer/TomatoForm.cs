@@ -108,6 +108,7 @@ namespace ChronoFagTimer
         }
         int _idleDeltaCounter;
 
+
         /// <summary>
         /// Visible property sometimes true inside Timer.Tick event when actually it's false
         /// so use own robust property
@@ -299,6 +300,7 @@ namespace ChronoFagTimer
                 {
                     _idle = false;
                     Logger.Info("End idle");
+                    IsAfterBreak = false;
 
                     // reset timer interval
                     timeUnitTimer.Interval = 1000;
@@ -309,6 +311,30 @@ namespace ChronoFagTimer
             }
         }
         private bool _idle = false;
+
+        /// <summary>
+        /// First time after a break
+        /// </summary>
+        bool IsAfterBreak
+        {
+            get
+            {
+                if (_isAfterBreak)
+                {
+                    if (Counter < config.WorkTimerShowFirstTime)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            set
+            {
+                _isAfterBreak = value;
+            }
+        }
+        bool _isAfterBreak = true;
+
 
         public bool IsPomodoro
         {
@@ -340,7 +366,7 @@ namespace ChronoFagTimer
             if (IsPomodoro)
             {
                 // if mouse cursor in hot area, or idle, or first 5 seconds of pomodoro
-                if (mouseShowPomodoro() || IsIdle ||  Counter < 5)
+                if (mouseShowPomodoro() || IsIdle || IsAfterBreak)
                 {
                     if (AllowMouseEventForCurrentProcess())
                     {
@@ -546,6 +572,7 @@ namespace ChronoFagTimer
             Logger.Info("Start pomodoro[{0}|{1}] ({2})", CurrentRound, pomodoroCounter, CurrentTimeUnit.Title);
             Helper.PlaySound(config.PomodoroSound);
 
+            IsAfterBreak = true;
             this.FadeOut();
 
             var pos = getPomodoroPosition();

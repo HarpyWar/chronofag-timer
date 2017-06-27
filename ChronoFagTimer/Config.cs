@@ -146,6 +146,7 @@ namespace ChronoFagTimer
             UserTimerSound = jobj["usertimer"]["sound"];
 
             UserTimerShowFirstTime = jobj["usertimer"]["showfirsttime"];
+            WorkTimerShowFirstTime = jobj["worktimer"]["showfirsttime"];
 
             IdleTime = jobj["idletime"];
             LockKeyboard = jobj["breaktimer"]["lockkeyboard"];
@@ -175,6 +176,7 @@ namespace ChronoFagTimer
         public bool LockKeyboard { get; private set; }
 
         public int UserTimerShowFirstTime { get; private set; }
+        public int WorkTimerShowFirstTime { get; private set; }
 
         public struct Style
         {
