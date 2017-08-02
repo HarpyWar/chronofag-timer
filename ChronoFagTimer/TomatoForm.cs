@@ -70,6 +70,10 @@ namespace ChronoFagTimer
         {
             get
             {
+                if (_currentRound >= config.Times.Count)
+                {
+                    _currentRound = 0;
+                }
                 return _currentRound;
             }
             set
@@ -99,6 +103,8 @@ namespace ChronoFagTimer
 
                 _idleDeltaCounter = value;
                 Logger.Trace("Set IdleDeltaCounter = {0}", _idleDeltaCounter);
+
+                // if idle counter > the previous break time then set previous pomodoro
                 if (_idleDeltaCounter > getPrevTime(typeof(Break)).CounterLimit)
                 {
                     CurrentRound = getPrevTimeIndex(typeof(Pomodoro));
@@ -365,7 +371,9 @@ namespace ChronoFagTimer
         {
             if (IsPomodoro)
             {
-                // if mouse cursor in hot area, or idle, or first 5 seconds of pomodoro
+                // if mouse cursor in hot area
+                // or idle
+                // or first 5 seconds of pomodoro
                 if (mouseShowPomodoro() || IsIdle || IsAfterBreak)
                 {
                     if (AllowMouseEventForCurrentProcess())
@@ -545,12 +553,13 @@ namespace ChronoFagTimer
             updateElementsPosition();
 
             this.FadeIn(false);
+
+            // focus form
+            this.Activate();
+            this.Focus();
         }
         private void updateBreakPosition()
         {
-            // focus form
-            this.Activate();
-
             // update size to make sure all the screen always filled
             this.Width = Screen.PrimaryScreen.Bounds.Width;
             this.Height = Screen.PrimaryScreen.Bounds.Height;
@@ -821,15 +830,22 @@ namespace ChronoFagTimer
         /// <returns></returns>
         private bool AllowMouseEventForCurrentProcess()
         {
-            var pname = WinApi.GetActiveProcessFileName();
-            foreach(var app in config.SilenceApps)
+            try
             {
-                if (pname.ToLower() == app.ToLower())
+                var pname = WinApi.GetActiveProcessFileName();
+                foreach (var app in config.SilenceApps)
                 {
-                    return false;
+                    if (pname.ToLower() == app.ToLower())
+                    {
+                        return false;
+                    }
                 }
+                return true;
             }
-            return true;
+            catch
+            {
+                return false;
+            }
         }
 
         #region User Timers
