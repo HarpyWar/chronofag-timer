@@ -103,9 +103,18 @@
   #  when mouse move near a corner, and do not show alerts (only play sound)
   #  In most cases here should be games that are running in full screen
   "silence_apps": [
-	  "War3",
+	# games
+	  "war3",
 	  "starcraft",
-	  "StarCraft II"
+	  "StarCraft II",
+
+	# media players
+	  "vlc",
+	  "ace_player",
+	  "kmplayer",
+	  "wmplayer",
+	  "mpc-hc",
+	  "mpc-hc64",
   ],
 
 
@@ -130,6 +139,12 @@
     "lockkeyboard": false,
 
     "sound": "sound/break.mp3",
+	
+	# max additinal times allowed to postpone break
+	#  (set 0 to disable extratime button)
+	"max_extratimes": 2,
+	# how many time to add (seconds)
+	"extratime": 300,
 
     "background": "#8f76a8",
     "foreground": "#ffffff"
@@ -151,8 +166,10 @@
 
   "phrases": {
 	"idletitle": "IDLE MODE",
+	"extramodetitle": "EXTRA MODE",
+	"addextratime": "I need {0} more minutes to work right now.\n(Next break time will be increased to {1} minute(s))",
 	"lockmode": "Keyboard locked up, you have to rest",
-	"freemode": "The program can be closed by ALT+F4",
+	"freemode": "Let's go away from keyboard for awhile",
 	"autostart": "Autostart",
 	"about": "About...",
 	"quit": "Quit",
@@ -168,6 +185,7 @@
 	"timerelapsed": "Elapsed at",
 	"maxtimerswarn": "7 user timers are maximum",
 	"maxtimerswarntitle": "Could not add timer",
+	"needmoretime": "Give me more time",
   }
 
 

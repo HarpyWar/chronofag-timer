@@ -15,13 +15,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using NLog;
+
 namespace ChronoFagTimer
 {
     public class TimeUnit
     {
-        public TimeUnit(int limit, string title)
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        public TimeUnit(int limit, int extraTime, string title)
         {
             CounterLimit = limit;
+            ExtraTime = extraTime; // value from config
             Title = title;
         }
         /// <summary>
@@ -29,26 +34,64 @@ namespace ChronoFagTimer
         /// </summary>
         public int CounterLimit
         {
-            get;
-            private set;
+            get
+            {
+                return ExtraMode 
+                    ? ExtraTime
+                    : _counterLimit;
+            }
+            private set
+            {
+                _counterLimit = value;
+            }
         }
+        int _counterLimit;
 
         public string Title
         {
             get;
             private set;
         }
+
+        /// <summary>
+        /// Set value from config, actully used only for pomodoro
+        /// </summary>
+        private int ExtraTime
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Actually extramode can be only set for pomodoro
+        /// </summary>
+        public bool ExtraMode
+        {
+            get
+            {
+                return _extraMode;
+            }
+            set
+            {
+                _extraMode = value;
+                Logger.Trace("Set extramode = {0}", _extraMode);
+            }
+        }
+        bool _extraMode = false;
+
+
+
     }
 
     public class Break : TimeUnit
     {
-        public Break(int limit, string title) : base(limit, title)
+        public Break(int limit, int extraTime, string title) : base(limit, extraTime, title)
         {
         }
     }
     public class Pomodoro : TimeUnit
     {
-        public Pomodoro(int limit, string title) : base(limit, title)
+        public Pomodoro(int limit, int extraTime, string title) : base(limit, extraTime, title)
         {
         }
     }

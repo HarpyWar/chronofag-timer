@@ -69,17 +69,20 @@ namespace ChronoFagTimer
         {
             var jobj = HjsonValue.Load(fileName).Qo();
 
+            MaxExtraTimes = jobj["breaktimer"]["max_extratimes"];
+            ExtraTime = jobj["breaktimer"]["extratime"];
+
             Times = new List<TimeUnit>();
             foreach (dynamic item in jobj["rounds"])
             {
                 TimeUnit unit;
                 if (item["type"] == "work")
                 {
-                    unit = new Pomodoro(item["time"], item["title"]);
+                    unit = new Pomodoro(item["time"], ExtraTime, item["title"]);
                 }
                 else // break
                 {
-                    unit = new Break(item["time"], item["title"]);
+                    unit = new Break(item["time"], ExtraTime, item["title"]);
                 }
                 Times.Add(unit);
             }
@@ -150,6 +153,7 @@ namespace ChronoFagTimer
 
             IdleTime = jobj["idletime"];
             LockKeyboard = jobj["breaktimer"]["lockkeyboard"];
+
         }
 
         public List<TimeUnit> Times { get; private set; }
@@ -177,6 +181,10 @@ namespace ChronoFagTimer
 
         public int UserTimerShowFirstTime { get; private set; }
         public int WorkTimerShowFirstTime { get; private set; }
+
+        public int ExtraTime { get; private set; }
+        public int MaxExtraTimes { get; private set; }
+
 
         public struct Style
         {

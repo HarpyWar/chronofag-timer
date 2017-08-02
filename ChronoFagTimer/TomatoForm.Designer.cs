@@ -35,6 +35,8 @@
             this.lblTitle = new System.Windows.Forms.Label();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.lblDownTitle = new System.Windows.Forms.Label();
+            this.btnExtraTime = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // lblPomodoroTime
@@ -79,11 +81,27 @@
             this.lblDownTitle.TabIndex = 4;
             this.lblDownTitle.Text = "lblDownTitle";
             // 
+            // btnExtraTime
+            // 
+            this.btnExtraTime.BackgroundImage = global::ChronoFagTimer.Properties.Resources.extra_time;
+            this.btnExtraTime.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnExtraTime.FlatAppearance.BorderColor = System.Drawing.Color.Snow;
+            this.btnExtraTime.FlatAppearance.BorderSize = 2;
+            this.btnExtraTime.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExtraTime.Location = new System.Drawing.Point(316, 166);
+            this.btnExtraTime.Name = "btnExtraTime";
+            this.btnExtraTime.Size = new System.Drawing.Size(52, 53);
+            this.btnExtraTime.TabIndex = 5;
+            this.btnExtraTime.UseVisualStyleBackColor = true;
+            this.btnExtraTime.Click += new System.EventHandler(this.btnExtraTime_Click);
+            this.btnExtraTime.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnExtraTime_Click);
+            // 
             // TomatoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(389, 231);
+            this.Controls.Add(this.btnExtraTime);
             this.Controls.Add(this.lblDownTitle);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.lblBreakTime);
@@ -109,6 +127,8 @@
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.Label lblDownTitle;
+        private System.Windows.Forms.Button btnExtraTime;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 

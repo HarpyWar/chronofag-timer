@@ -78,8 +78,24 @@ namespace ChronoFagTimer
             }
             set
             {
+
                 _currentRound = value;
                 Logger.Debug("Change round to {0} {1} ({2})", _currentRound, CurrentTimeUnit.GetType(), CurrentTimeUnit.Title);
+
+
+                // reset counter
+                Counter = 0;
+                // reset alert
+                Alert = null;
+
+                if (CurrentTimeUnit is Break)
+                {
+                    startBreak();
+                }
+                if (CurrentTimeUnit is Pomodoro)
+                {
+                    startPomodoro();
+                }
             }
         }
         int _currentRound = 0;
@@ -121,6 +137,19 @@ namespace ChronoFagTimer
         /// </summary>
         public bool Visibility = true;
 
+
+        /// <summary>
+        /// How many extra time added for a next break (seconds)
+        /// </summary>
+        int ExtraBreakTime = 0;
+
+        /// <summary>
+        /// Counter of user requested extra breaks for current pomodoro
+        /// </summary>
+        int ExtraCounter = 0;
+
+
+
         public TomatoForm()
         {
             InitializeComponent();
@@ -159,7 +188,7 @@ namespace ChronoFagTimer
             menuAddTimer.Click += MenuAddTimer_Click;
 
             var contextMenu = new System.Windows.Forms.ContextMenu();
-            contextMenu.MenuItems.AddRange(new MenuItem[] 
+            contextMenu.MenuItems.AddRange(new MenuItem[]
             {
                 menuAddTimer,
                 menuAutostart,
@@ -172,6 +201,7 @@ namespace ChronoFagTimer
             lblDownTitle.Text = config.LockKeyboard
                 ? config.GetPhrase("lockmode")
                 : config.GetPhrase("freemode");
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -293,6 +323,13 @@ namespace ChronoFagTimer
                 var idle = idleTime >= config.IdleTime;
                 if (!_idle && idle)
                 {
+                    if (CurrentTimeUnit.ExtraMode)
+                    {
+                        Logger.Info("Force next round due to idle in extramode");
+                        Counter = CurrentTimeUnit.CounterLimit;
+                        return false;
+                    }
+
                     _idle = true;
                     Logger.Info("Start idle");
 
@@ -403,28 +440,31 @@ namespace ChronoFagTimer
             handleSleepLeap();
 
             // check for round finish
-            if (Counter >= CurrentTimeUnit.CounterLimit)
+            if (Counter >= CurrentTimeUnit.CounterLimit + ((CurrentTimeUnit is Break) ? ExtraBreakTime : 0))
             {
-                // reset counter
-                Counter = 0;
-                // reset alert
-                Alert = null;
-
-                // increase round
+                // increase round (CurrentTimeUnit automatically increases)
                 CurrentRound++;
-                if (CurrentRound >= config.Times.Count)
-                {
-                    CurrentRound = 0;
-                }
 
                 if (CurrentTimeUnit is Break)
                 {
-                    startBreak();
+                    var prevTime = getPrevTime(typeof(Pomodoro));
+                    if (prevTime.ExtraMode)
+                    {
+                        // reset extramode
+                        prevTime.ExtraMode = false;
+                        // add break time
+                        ExtraBreakTime += getExtraBreakTime();
+                        Logger.Trace("Set breaktime = {0}", ExtraBreakTime);
+                    }
                 }
-                if (CurrentTimeUnit is Pomodoro)
+                else
                 {
-                    startPomodoro();
+                    // reset if was set
+                    ExtraBreakTime = 0;
+                    Logger.Trace("Reset breaktime");
+                    ExtraCounter = 0;
                 }
+
                 return;
             }
 
@@ -480,7 +520,7 @@ namespace ChronoFagTimer
                 }
             }
 
-        updatePositions:
+            updatePositions:
 
             // set label position
             if (CurrentTimeUnit is Break)
@@ -537,6 +577,15 @@ namespace ChronoFagTimer
                 Logger.Debug("Lock keyboard");
                 WinApi.InterceptKeys.LockKeyboard();
             }
+
+            btnExtraTime.Visible = ExtraCounter < config.MaxExtraTimes; // show extra button only if allowed
+            this.toolTip1.SetToolTip(this.btnExtraTime,
+                string.Format(config.GetPhrase("addextratime"),
+                    config.ExtraTime / 60,
+                    getExtraBreakTime() / 60
+                )
+            );
+
             this.FadeOut(true);
 
             Logger.Info("Start break[{0}] ({1})", CurrentRound, CurrentTimeUnit.Title);
@@ -564,7 +613,7 @@ namespace ChronoFagTimer
             this.Width = Screen.PrimaryScreen.Bounds.Width;
             this.Height = Screen.PrimaryScreen.Bounds.Height;
 
-            lblBreakTime.Text = Helper.GetTimeElapsedString(Counter, CurrentTimeUnit.CounterLimit);
+            lblBreakTime.Text = Helper.GetTimeElapsedString(Counter, CurrentTimeUnit.CounterLimit + ExtraBreakTime);
 
             lblBreakTime.Left = this.Width / 2 - lblBreakTime.Width / 2;
             lblBreakTime.Top = this.Height / 2 - lblBreakTime.Height / 2;
@@ -582,6 +631,7 @@ namespace ChronoFagTimer
             Helper.PlaySound(config.PomodoroSound);
 
             IsAfterBreak = true;
+            btnExtraTime.Visible = false;
             this.FadeOut();
 
             var pos = getPomodoroPosition();
@@ -616,7 +666,7 @@ namespace ChronoFagTimer
             // set always on top 
             if (!this.TopMost)
             {
-                this.TopMost = true; 
+                this.TopMost = true;
             }
 
             // title
@@ -625,7 +675,9 @@ namespace ChronoFagTimer
 
             lblTitle.Text = IsIdle
                 ? config.GetPhrase("idletitle")
-                : CurrentTimeUnit.Title;
+                : CurrentTimeUnit.ExtraMode
+                    ? config.GetPhrase("extramodetitle")
+                    : CurrentTimeUnit.Title;
             lblTitle.Left = this.Width / 2 - lblTitle.Width / 2;
             lblTitle.Top = (IsPomodoro ? lblPomodoroTime.Top : lblBreakTime.Top) / 4;
             lblTitle.ForeColor = lblDownTitle.ForeColor = IsPomodoro ? config.Face.PomodoroForeground : config.Face.BreakForeground;
@@ -635,6 +687,10 @@ namespace ChronoFagTimer
                 lblDownTitle.Show();
                 lblDownTitle.Left = this.Width / 2 - lblDownTitle.Width / 2;
                 lblDownTitle.Top = this.Height - (this.Height - lblBreakTime.Top) / 4;
+
+                btnExtraTime.Width = btnExtraTime.Height = 100;
+                btnExtraTime.Left = this.Height - lblDownTitle.Top - btnExtraTime.Height;
+                btnExtraTime.Top = lblDownTitle.Top;
             }
             else
             {
@@ -749,14 +805,14 @@ namespace ChronoFagTimer
                 return;
             }
             // fade in up to 95% (for half-visible break window)
-            for (int i = 1; i < 95; i+=3)
+            for (int i = 1; i < 95; i += 3)
             {
                 System.Threading.Thread.Sleep(1);
                 var opacity = (double)i / 100;
                 this.Opacity = opacity;
                 this.Refresh();
             }
-          
+
         }
 
         /// <summary>
@@ -777,17 +833,17 @@ namespace ChronoFagTimer
             {
                 goto complete;
             }
-            for (int i = 100; i > 0; i-=3)
+            for (int i = 100; i > 0; i -= 3)
             {
                 System.Threading.Thread.Sleep(1);
                 var opacity = (double)i / 100;
                 this.Opacity = opacity;
                 this.Refresh();
             }
-        complete:
-            
+            complete:
+
             this.Left = -this.Width; //instead this.Hide(); which toggle focus
-            this.Top = -this.Height; 
+            this.Top = -this.Height;
             this.Visibility = false;
         }
 
@@ -848,6 +904,16 @@ namespace ChronoFagTimer
             }
         }
 
+        /// <summary>
+        /// Return how many seconds add to extra break
+        /// </summary>
+        /// <returns></returns>
+        private int getExtraBreakTime()
+        {
+            return (int)Math.Floor((double)CurrentTimeUnit.CounterLimit / (getPrevTime(typeof(Pomodoro)).CounterLimit / config.ExtraTime));
+        }
+
+
         #region User Timers
 
 
@@ -900,7 +966,8 @@ namespace ChronoFagTimer
                 menuRemoveTimer = find.First();
             }
             // add timer menu item 
-            var menuTimerItem = new MenuItem() {
+            var menuTimerItem = new MenuItem()
+            {
                 Text = !string.IsNullOrEmpty(title) ? title : config.GetPhrase("timerempty"),
                 Name = key
             };
@@ -929,6 +996,18 @@ namespace ChronoFagTimer
         {
             var utimer = (UserTimer)sender;
             RemoveCustomTimer(utimer.Key);
+        }
+
+        private void btnExtraTime_Click(object sender, EventArgs e)
+        {
+            ExtraCounter++;
+
+            // return to a pomodoro and set extramode
+            CurrentRound--;
+            CurrentTimeUnit.ExtraMode = true;
+
+            updateTomatoPosition();
+            updateElementsPosition();
         }
 
         public void RemoveCustomTimer(string key)

@@ -116,6 +116,7 @@
     </None>
     <None Include="App.Release.config" Condition=" '$(Configuration)' == 'Release' ">
       <DependentUpon>App.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +125,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="extra_time.png" />
     <Content Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
