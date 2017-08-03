@@ -92,6 +92,7 @@
             this.btnExtraTime.Name = "btnExtraTime";
             this.btnExtraTime.Size = new System.Drawing.Size(52, 53);
             this.btnExtraTime.TabIndex = 5;
+            this.btnExtraTime.TabStop = false;
             this.btnExtraTime.UseVisualStyleBackColor = true;
             this.btnExtraTime.Click += new System.EventHandler(this.btnExtraTime_Click);
             this.btnExtraTime.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnExtraTime_Click);

@@ -103,7 +103,7 @@ namespace ChronoFagTimer
         /// <summary>
         /// Additional time 
         /// </summary>
-        int IdleDeltaCounter
+        float IdleDeltaCounter
         {
             get
             {
@@ -128,7 +128,7 @@ namespace ChronoFagTimer
                 }
             }
         }
-        int _idleDeltaCounter;
+        float _idleDeltaCounter;
 
 
         /// <summary>
@@ -457,6 +457,7 @@ namespace ChronoFagTimer
                         Logger.Trace("Set breaktime = {0}", ExtraBreakTime);
                     }
                 }
+                // Pomodoro
                 else
                 {
                     // reset if was set
@@ -485,7 +486,7 @@ namespace ChronoFagTimer
                     }
                     else
                     {
-                        IdleDeltaCounter++;
+                        IdleDeltaCounter += (float)timeUnitTimer.Interval / 1000;
                     }
                     // do nothing if counter <= 0
                     return;
