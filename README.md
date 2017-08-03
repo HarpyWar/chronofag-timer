@@ -40,4 +40,4 @@ If this timer was valuable to you, you can development by donating
 * [Paypal](https://www.paypal.me/harpywar)
 * Yandex.Money `4100176229161`
 * Webmoney  `R306333557133` `Z170879613351`
-* Bitcoin `1LoiGSsasrzo8MS51kzFfAMBAhV7xUQDF8`
+* Bitcoin `1855gBwvXdV9XfiCVzTgY323wSp9boJLKm`

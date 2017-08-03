@@ -463,6 +463,9 @@ namespace ChronoFagTimer
                     ExtraBreakTime = 0;
                     Logger.Trace("Reset breaktime");
                     ExtraCounter = 0;
+
+                    // also reset idle
+                    IdleDeltaCounter = 0;
                 }
 
                 return;
