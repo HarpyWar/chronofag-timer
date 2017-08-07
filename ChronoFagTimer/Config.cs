@@ -16,6 +16,7 @@
  */
 
 using Hjson;
+using Microsoft.Win32;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -220,7 +221,67 @@ namespace ChronoFagTimer
                 int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber));
         }
 
+        #region Registy
 
+        string regKey = @"SOFTWARE\ChronoFagTimer";
+        public void SaveCurrentState(int counter, int currentRound, DateTime lastActiveTime)
+        {
+            var key = Registry.CurrentUser.CreateSubKey(regKey);
+            if (key != null)
+            {
+                key.SetValue("Counter", counter);
+                key.SetValue("CurrentRound", currentRound);
+                key.SetValue("LastActiveTime", lastActiveTime);
+                key.Close();
+            }
+        }
 
+        public int LoadCounterState()
+        {
+            var key = Registry.CurrentUser.CreateSubKey(regKey);
+            int value = 0;
+            if (key != null)
+            {
+                var obj = key.GetValue("Counter");
+                if (obj != null)
+                {
+                    int.TryParse(obj.ToString(), out value);
+                }
+            }
+            key.Close();
+            return value;
+        }
+        public int LoadCurrentRoundState()
+        {
+            var key = Registry.CurrentUser.CreateSubKey(regKey);
+            int value = 0;
+            if (key != null)
+            {
+                var obj = key.GetValue("CurrentRound");
+                if (obj != null)
+                {
+                    int.TryParse(obj.ToString(), out value);
+                }
+            }
+            key.Close();
+            return value;
+        }
+        public DateTime LoadLastActiveTimeState()
+        {
+            var key = Registry.CurrentUser.CreateSubKey(regKey);
+            DateTime value = DateTime.Now;
+            if (key != null)
+            {
+                var obj = key.GetValue("LastActiveTime");
+                if (obj != null)
+                {
+                    DateTime.TryParse(obj.ToString(), out value);
+                }
+            }
+            key.Close();
+            return value;
+        }
+
+        #endregion
     }
 }

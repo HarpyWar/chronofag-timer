@@ -261,6 +261,8 @@ namespace ChronoFagTimer
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            Logger.Info("Initialization...");
+
             timeUnitTimer = new Timer()
             {
                 Interval = 1000,
@@ -281,12 +283,15 @@ namespace ChronoFagTimer
             lblPomodoroTime.Font = new Font(FontFamily.GenericSerif, Helper.GetTimerFontSize());
             lblPomodoroTime.ForeColor = config.Face.PomodoroForeground;
 
-
-            startPomodoro();
             this.WindowState = FormWindowState.Normal;
 
-            updateTomatoPosition();
-            updateElementsPosition();
+     
+            // load state from registry
+            CurrentRound = config.LoadCurrentRoundState();
+            Counter = config.LoadCounterState();
+            lastActiveTime = config.LoadLastActiveTimeState();
+
+            Logger.Info("Initialized");
         }
 
         private void MenuAutostart_Click(object sender, EventArgs e)
@@ -597,20 +602,18 @@ namespace ChronoFagTimer
                 updateTomatoPosition();
             }
             updateElementsPosition();
+
+            config.SaveCurrentState(Counter, CurrentRound, lastActiveTime);
         }
 
         /// <summary>
         /// Last timer active time
         /// </summary>
-        DateTime? lastActiveTime = null;
+        DateTime lastActiveTime;
         private void handleSleepLeap()
         {
             var now = DateTime.Now;
-            if (lastActiveTime == null)
-            {
-                // first assign
-                lastActiveTime = now;
-            }
+
             var diff = (int)(now - (DateTime)lastActiveTime).TotalSeconds;
 
             // if was leap
@@ -761,7 +764,7 @@ namespace ChronoFagTimer
                 lblDownTitle.Left = this.Width / 2 - lblDownTitle.Width / 2;
                 lblDownTitle.Top = this.Height - (this.Height - lblBreakTime.Top) / 4;
 
-                btnExtraTime.Width = btnExtraTime.Height = 100;
+                btnExtraTime.Width = btnExtraTime.Height = this.Height / 12;
                 btnExtraTime.Left = this.Height - lblDownTitle.Top - btnExtraTime.Height;
                 btnExtraTime.Top = lblDownTitle.Top;
             }
@@ -848,7 +851,7 @@ namespace ChronoFagTimer
         }
 
 
-        #region show/hide animation
+#region show/hide animation
 
         /// <summary>
         /// Show form with fade animation
@@ -922,7 +925,7 @@ namespace ChronoFagTimer
 
 
 
-        #endregion
+#endregion
 
 
         /// <summary>
@@ -983,11 +986,14 @@ namespace ChronoFagTimer
         /// <returns></returns>
         private int getExtraBreakTime()
         {
-            return (int)Math.Floor((double)CurrentTimeUnit.CounterLimit / (getPrevTime(typeof(Pomodoro)).CounterLimit / config.ExtraTime));
+            var a = (double)CurrentTimeUnit.CounterLimit;
+            var b = (double)getPrevTime(typeof(Pomodoro)).CounterLimit / config.ExtraTime;
+            int result = (int)Math.Floor(a / b);
+            return result;
         }
 
 
-        #region User Timers
+#region User Timers
 
 
         /// <summary>
@@ -1107,6 +1113,6 @@ namespace ChronoFagTimer
         }
 
 
-        #endregion
+#endregion
     }
 }
