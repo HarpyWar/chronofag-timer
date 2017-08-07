@@ -4,15 +4,23 @@
 
 This is a productivity timer inspired by a [pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique).
 
+It can help you save lots of time and increase productivity if most of the day you spend at the computer.
+
+
 By default there is a classical pomodoro time of 25 minutes and break of 5 minutes. After first 4 pomodoros there is a break of 15 minutes and after 8 pomodoros &mdash; a break of 30 minutes (these settings can be changed in `config.hjson`).
 
 ![Pomodoro Timer](http://i.imgur.com/xfjKEBF.png)
 
-This timer differs from similar others by fully automation and locking a screen when a break. So you don't need manually click start or regulate a time 
+This timer differs from similar others by fully automation and locking a screen when a break. So you don't need manually click start or regulate a time.
 
-*You can enable lock mode by setting up `lockkeyboard = true` in [config.hjson](https://github.com/HarpyWar/chronofag-timer/blob/master/ChronoFagTimer/config.hjson#L128). After that you will not able to close the program (only kill a process in task manager).*
+Sometimes you may need a computer urgently when timer show a break. There is an extra time button that allows to add several minutes to work timer, and immediately switch to work mode. 
 
-![Break Timer](http://i.imgur.com/2J7WDMd.png)
+![Break Timer](http://i.imgur.com/wkcOFDM.png)
+
+*Lock mode can be enabled for a basic protection from yourself (or childrens if you want to limit time for them). With enabled `lockmode` you will not able to close the program with any way, except kill a process in task manager.*
+
+In additional for better protect you can disable Task Manager in Windows policy and remove write permissions for `config.hjson`. Timer restores a previous session after the program restart, so a computer reboot will not help to reset a break.
+
 
 It also have automatically adjustment for timers when you AFK for a while.
 
@@ -28,15 +36,19 @@ You will always see when a timer is elapsed, so you can't miss important things 
 * Flexible settings for work and break timers
 * Adjustment of time after AFK (including a computer sleep mode)
 * Show timer notifications for predefined time before it elapsed
+* Restore timer after program restart
+* Stop/start timer from menu if you want to temporary disable timer, without full exit
+* Autostart with Windows (optional)
 * Sound notifications
-* Lock screen by force during break time (option `lockkeyboard`). 
+* Lock controls during break time (option `lockmode`). 
+* Extra time button (option `max_extratimes`). 
 * Add single user timers
 * Customizable color style
 
 
 ## Donation
 
-If this timer was valuable to you, you can development by donating
+If this timer was valuable to you, you can support development by donating
 * [Paypal](https://www.paypal.me/harpywar)
 * Yandex.Money `4100176229161`
 * Webmoney  `R306333557133` `Z170879613351`
