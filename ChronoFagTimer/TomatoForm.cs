@@ -170,7 +170,13 @@ namespace ChronoFagTimer
             this.Hide();
 
             // fill tray context
-            var menuQuit = new MenuItem() { Text = config.LockKeyboard ? config.GetPhrase("quitlocked") : config.GetPhrase("quit"), Enabled = !config.LockKeyboard };
+            var menuQuit = new MenuItem()
+            {
+                Text = config.LockMode 
+                    ? config.GetPhrase("quit") + " " + config.GetPhrase("locked") 
+                    : config.GetPhrase("quit"),
+                Enabled = !config.LockMode
+            };
             menuQuit.Click += MenuQuit_Click;
 
             var menuAbout = new MenuItem() { Text = config.GetPhrase("about") };
@@ -178,11 +184,32 @@ namespace ChronoFagTimer
 
             var menuAutostart = new MenuItem()
             {
-                Text = config.GetPhrase("autostart"),
+                Text = config.LockMode
+                    ? config.GetPhrase("autostart") + " " + config.GetPhrase("locked")
+                    : config.GetPhrase("autostart"),
                 Name = "menuAutostart",
-                Checked = WinApi.GetStartup(config.ApplicationName, Application.ExecutablePath)
+                Checked = WinApi.GetStartup(config.ApplicationName, Application.ExecutablePath),
+                Enabled = !config.LockMode
             };
             menuAutostart.Click += MenuAutostart_Click;
+
+            var menuStart = new MenuItem()
+            {
+                Text = config.GetPhrase("start"),
+                Name = "menuStart",
+                Enabled = false
+            };
+            menuStart.Click += MenuStart_Click;
+
+            var menuStop = new MenuItem()
+            {
+                Text = config.LockMode
+                    ? config.GetPhrase("stop") + " " + config.GetPhrase("locked")
+                    : config.GetPhrase("stop"),
+                Name = "menuStop",
+                Enabled = !config.LockMode
+            };
+            menuStop.Click += MenuStop_Click;
 
             var menuAddTimer = new MenuItem() { Text = config.GetPhrase("addtimer") };
             menuAddTimer.Click += MenuAddTimer_Click;
@@ -191,17 +218,45 @@ namespace ChronoFagTimer
             contextMenu.MenuItems.AddRange(new MenuItem[]
             {
                 menuAddTimer,
+                new MenuItem() { Text = "-" },
+                menuStart,
+                menuStop,
                 menuAutostart,
+                new MenuItem() { Text = "-" },
                 menuAbout,
                 menuQuit
             });
             this.notifyIcon1.Text = this.Text = config.ApplicationName;
             this.notifyIcon1.ContextMenu = contextMenu;
 
-            lblDownTitle.Text = config.LockKeyboard
-                ? config.GetPhrase("lockmode")
-                : config.GetPhrase("freemode");
+            lblDownTitle.Text = config.LockMode
+                ? config.GetPhrase("lockmodesubtitle")
+                : config.GetPhrase("freemodesubtitle");
 
+        }
+
+        private void MenuStop_Click(object sender, EventArgs e)
+        {
+            notifyIcon1.ContextMenu.MenuItems.Find("menuStop", false).First().Enabled = false;
+            notifyIcon1.ContextMenu.MenuItems.Find("menuStart", false).First().Enabled = true;
+
+            Logger.Info("Stopped by user");
+            timeUnitTimer.Enabled = false;
+            CurrentRound = 0;
+            Counter = CurrentTimeUnit.CounterLimit; // set visible counter = 0:00
+            updateTomatoPosition();
+            updateElementsPosition();
+            this.FadeOut();
+        }
+
+        private void MenuStart_Click(object sender, EventArgs e)
+        {
+            notifyIcon1.ContextMenu.MenuItems.Find("menuStop", false).First().Enabled = true;
+            notifyIcon1.ContextMenu.MenuItems.Find("menuStart", false).First().Enabled = false;
+
+            Logger.Info("Started by user");
+            CurrentRound = 0; // reset counter
+            timeUnitTimer.Enabled = true;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -362,6 +417,12 @@ namespace ChronoFagTimer
         {
             get
             {
+                // if stopped mode then it's not after a break
+                if (!timeUnitTimer.Enabled)
+                {
+                    return false;
+                }
+
                 if (_isAfterBreak)
                 {
                     if (Counter < config.WorkTimerShowFirstTime)
@@ -576,7 +637,7 @@ namespace ChronoFagTimer
 
         private void startBreak()
         {
-            if (config.LockKeyboard)
+            if (config.LockMode)
             {
                 Logger.Debug("Lock keyboard");
                 WinApi.InterceptKeys.LockKeyboard();
@@ -625,14 +686,21 @@ namespace ChronoFagTimer
 
         private void startPomodoro()
         {
-            if (config.LockKeyboard)
+            if (config.LockMode)
             {
                 Logger.Debug("Unlock keyboard");
                 WinApi.InterceptKeys.UnlockKeyboard();
             }
 
-            Logger.Info("Start pomodoro[{0}|{1}] ({2})", CurrentRound, pomodoroCounter, CurrentTimeUnit.Title);
-            Helper.PlaySound(config.PomodoroSound);
+            if (timeUnitTimer.Enabled)
+            {
+                Logger.Info("Start pomodoro[{0}|{1}] ({2})", CurrentRound, pomodoroCounter, CurrentTimeUnit.Title);
+                Helper.PlaySound(config.PomodoroSound);
+
+                pomodoroCounter++;
+            }
+
+
 
             IsAfterBreak = true;
             btnExtraTime.Visible = false;
@@ -649,9 +717,8 @@ namespace ChronoFagTimer
 
             updateTomatoPosition();
             updateElementsPosition();
-
-            pomodoroCounter++;
         }
+
         private void updateTomatoPosition()
         {
             // update form size to make sure it always correct
@@ -681,7 +748,9 @@ namespace ChronoFagTimer
                 ? config.GetPhrase("idletitle")
                 : CurrentTimeUnit.ExtraMode
                     ? config.GetPhrase("extramodetitle")
-                    : CurrentTimeUnit.Title;
+                    : timeUnitTimer.Enabled
+                        ? CurrentTimeUnit.Title
+                        : config.GetPhrase("stopmodetitle");
             lblTitle.Left = this.Width / 2 - lblTitle.Width / 2;
             lblTitle.Top = (IsPomodoro ? lblPomodoroTime.Top : lblBreakTime.Top) / 4;
             lblTitle.ForeColor = lblDownTitle.ForeColor = IsPomodoro ? config.Face.PomodoroForeground : config.Face.BreakForeground;

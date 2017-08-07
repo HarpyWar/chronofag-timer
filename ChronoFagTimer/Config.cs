@@ -152,7 +152,7 @@ namespace ChronoFagTimer
             WorkTimerShowFirstTime = jobj["worktimer"]["showfirsttime"];
 
             IdleTime = jobj["idletime"];
-            LockKeyboard = jobj["breaktimer"]["lockkeyboard"];
+            LockMode = jobj["breaktimer"]["lockmode"];
 
         }
 
@@ -177,7 +177,7 @@ namespace ChronoFagTimer
         public string UserTimerSound { get; private set; }
         
         public int IdleTime { get; private set; }
-        public bool LockKeyboard { get; private set; }
+        public bool LockMode { get; private set; }
 
         public int UserTimerShowFirstTime { get; private set; }
         public int WorkTimerShowFirstTime { get; private set; }

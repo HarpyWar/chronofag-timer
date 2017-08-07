@@ -135,8 +135,8 @@
   },
 
   "breaktimer": {
-    # lock keyboard during a break without a possibility to exit (true | false)
-    "lockkeyboard": false,
+    # lock keyboard during a break without a possibility to exit, also disable menu items "stop" and "exit" (true | false)
+    "lockmode": true,
 
     "sound": "sound/break.mp3",
 	
@@ -167,13 +167,16 @@
   "phrases": {
 	"idletitle": "IDLE MODE",
 	"extramodetitle": "EXTRA MODE",
+	"stopmodetitle": "STOP MODE",
 	"addextratime": "I need {0} more minutes to work right now.\n(Next break time will be increased to {1} minute(s))",
-	"lockmode": "Keyboard locked up, you have to rest",
-	"freemode": "Let's go away from keyboard for awhile",
+	"lockmodesubtitle": "Workspace locked up, you have to rest",
+	"freemodesubtitle": "Let's go away from keyboard for awhile",
+	"start": "Start",
+	"stop": "Stop",
 	"autostart": "Autostart",
 	"about": "About...",
 	"quit": "Quit",
-	"quitlocked": "Quit (lock mode)",
+	"locked": "(locked)",
 	"addtimer": "Add Timer...",
 	"removetimer": "Remove Timer",
 	"timercaption": "Caption",
