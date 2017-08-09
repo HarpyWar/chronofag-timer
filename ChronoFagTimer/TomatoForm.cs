@@ -677,10 +677,11 @@ namespace ChronoFagTimer
         }
         private void updateBreakPosition()
         {
+#if !DEBUG
             // update size to make sure all the screen always filled
             this.Width = Screen.PrimaryScreen.Bounds.Width;
             this.Height = Screen.PrimaryScreen.Bounds.Height;
-
+#endif
             lblBreakTime.Text = Helper.GetTimeElapsedString(Counter, CurrentTimeUnit.CounterLimit + ExtraBreakTime);
 
             lblBreakTime.Left = this.Width / 2 - lblBreakTime.Width / 2;
@@ -987,7 +988,7 @@ namespace ChronoFagTimer
         private int getExtraBreakTime()
         {
             var a = (double)CurrentTimeUnit.CounterLimit;
-            var b = (double)getPrevTime(typeof(Pomodoro)).CounterLimit / config.ExtraTime;
+            var b = (double)getPrevTime(typeof(Pomodoro)).CounterLimitOriginal / config.ExtraTime;
             int result = (int)Math.Floor(a / b);
             return result;
         }

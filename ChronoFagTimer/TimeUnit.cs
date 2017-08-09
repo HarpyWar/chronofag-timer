@@ -47,6 +47,14 @@ namespace ChronoFagTimer
         }
         int _counterLimit;
 
+        public int CounterLimitOriginal
+        {
+            get
+            {
+                return _counterLimit;
+            }
+        }
+
         public string Title
         {
             get;
@@ -74,7 +82,7 @@ namespace ChronoFagTimer
             set
             {
                 _extraMode = value;
-                Logger.Trace("Set extramode = {0}", _extraMode);
+                Logger.Info("Set extramode = {0}", _extraMode);
             }
         }
         bool _extraMode = false;
