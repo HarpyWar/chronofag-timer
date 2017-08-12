@@ -255,6 +255,9 @@ namespace ChronoFagTimer
             notifyIcon1.ContextMenu.MenuItems.Find("menuStart", false).First().Enabled = false;
 
             Logger.Info("Started by user");
+            CurrentTimeUnit.ExtraMode = false; // reset extramode if set for current round
+            ExtraBreakTime = ExtraCounter = 0; 
+
             CurrentRound = 0; // reset counter
             timeUnitTimer.Enabled = true;
         }
@@ -285,11 +288,22 @@ namespace ChronoFagTimer
 
             this.WindowState = FormWindowState.Normal;
 
-     
+
             // load state from registry
-            CurrentRound = config.LoadCurrentRoundState();
-            Counter = config.LoadCounterState();
-            lastActiveTime = config.LoadLastActiveTimeState();
+            {
+                lastActiveTime = config.LoadLastActiveTimeState();
+                // if last active time was too late then reset a timer, because otherwise we can see a big lag while time adjusting
+                if ((DateTime.Now - lastActiveTime).TotalSeconds > config.Times.Sum(t => t.CounterLimit))
+                {
+                    CurrentRound = 0;
+                }
+                else
+                {
+                    CurrentRound = config.LoadCurrentRoundState();
+                    Counter = config.LoadCounterState();
+                }
+            }
+
 
             Logger.Info("Initialized");
         }
