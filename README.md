@@ -17,9 +17,9 @@ Sometimes you may need a computer urgently when timer show a break. There is an 
 
 ![Break Timer](http://i.imgur.com/wkcOFDM.png)
 
-*Lock mode can be enabled for a basic protection from yourself (or childrens if you want to limit time for them). With enabled `lockmode` you will not able to close the program with any way, except kill a process in task manager.*
+*Lock mode can be enabled for a basic protection from yourself (or childrens if you want to limit time for them). With enabled `lockmode` you will not able to close the program with any way, except kill a process in task manager.
 
-In additional for better protect you can disable Task Manager in Windows policy and remove write permissions for `config.hjson`. Timer restores a previous session after the program restart, so a computer reboot will not help to reset a break.
+For better protect you can disable Task Manager in Windows policy and remove write permissions for `config.hjson`. Timer restores a previous session after the program restart, so a computer reboot will not help to reset a break.*
 
 
 It also have automatically adjustment for timers when you AFK for a while.
