@@ -379,6 +379,11 @@ namespace ChronoFagTimer
         {
             get
             {
+                // idle always false if "stop mode"
+                if (!timeUnitTimer.Enabled)
+                {
+                    return false;
+                }
                 // if zero then disable idle mode
                 if (config.IdleTime == 0)
                 {
