@@ -94,7 +94,7 @@
             this.btnExtraTime.TabIndex = 5;
             this.btnExtraTime.TabStop = false;
             this.btnExtraTime.UseVisualStyleBackColor = true;
-            this.btnExtraTime.Click += new System.EventHandler(this.btnExtraTime_Click);
+            this.btnExtraTime.Click += new System.EventHandler(this.btnExtraTime_Click_1);
             this.btnExtraTime.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnExtraTime_Click);
             // 
             // TomatoForm
