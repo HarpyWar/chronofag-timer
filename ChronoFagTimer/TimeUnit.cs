@@ -81,6 +81,10 @@ namespace ChronoFagTimer
             }
             set
             {
+                if (_extraMode == value)
+                {
+                    return;
+                }
                 _extraMode = value;
                 Logger.Info("Set extramode = {0}", _extraMode);
             }

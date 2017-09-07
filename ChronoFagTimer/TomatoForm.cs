@@ -255,8 +255,8 @@ namespace ChronoFagTimer
             notifyIcon1.ContextMenu.MenuItems.Find("menuStart", false).First().Enabled = false;
 
             Logger.Info("Started by user");
-            CurrentTimeUnit.ExtraMode = false; // reset extramode if set for current round
-            ExtraBreakTime = ExtraCounter = 0; 
+            resetExtraMode();
+            ExtraBreakTime = ExtraCounter = 0;
 
             CurrentRound = 0; // reset counter
             timeUnitTimer.Enabled = true;
@@ -535,8 +535,7 @@ namespace ChronoFagTimer
                     var prevTime = getPrevTime(typeof(Pomodoro));
                     if (prevTime.ExtraMode)
                     {
-                        // reset extramode
-                        prevTime.ExtraMode = false;
+                        resetExtraMode();
                         // add break time
                         ExtraBreakTime += getExtraBreakTime();
                         Logger.Trace("Set breaktime = {0}", ExtraBreakTime);
@@ -625,6 +624,14 @@ namespace ChronoFagTimer
             config.SaveCurrentState(Counter, CurrentRound, lastActiveTime);
         }
 
+        private void resetExtraMode()
+        {
+            for (var i = 0; i < config.Times.Count; i++)
+            {
+                config.Times[i].ExtraMode = false;
+            }
+        }
+
         /// <summary>
         /// Last timer active time
         /// </summary>
@@ -652,6 +659,9 @@ namespace ChronoFagTimer
                         IdleDeltaCounter++;
                     }
                 }
+
+                // also reset extramode
+                resetExtraMode();
             }
             // set to current date
             lastActiveTime = now;
