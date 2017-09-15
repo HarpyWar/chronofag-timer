@@ -226,61 +226,71 @@ namespace ChronoFagTimer
         string regKey = @"SOFTWARE\ChronoFagTimer";
         public void SaveCurrentState(int counter, int currentRound, DateTime lastActiveTime)
         {
-            var key = Registry.CurrentUser.CreateSubKey(regKey);
-            if (key != null)
+            var values = new Dictionary<string, string>();
+            values.Add("Counter", counter.ToString());
+            values.Add("CurrentRound", currentRound.ToString());
+            values.Add("LastActiveTime", lastActiveTime.ToString());
+            RegistrySaveValues(values);
+        }
+        public void RegistrySaveValue(string key, string value)
+        {
+            var r = Registry.CurrentUser.CreateSubKey(regKey);
+            if (r != null)
             {
-                key.SetValue("Counter", counter);
-                key.SetValue("CurrentRound", currentRound);
-                key.SetValue("LastActiveTime", lastActiveTime);
-                key.Close();
+                r.SetValue(key, value);
+                r.Close();
             }
         }
+        public void RegistrySaveValues(Dictionary<string, string> values)
+        {
+            var r = Registry.CurrentUser.CreateSubKey(regKey);
+            if (r != null)
+            {
+                foreach (var v in values)
+                {
+                    r.SetValue(v.Key, v.Value);
+                }
+                r.Close();
+            }
+        }
+        public string RegistryReadValue(string key)
+        {
+            var r = Registry.CurrentUser.CreateSubKey(regKey);
+            string value = string.Empty;
+            if (key != null)
+            {
+                var obj = r.GetValue(key);
+                if (obj != null)
+                {
+                    value = obj.ToString();
+                }
+            }
+            r.Close();
+            return value;
+        }
+
 
         public int LoadCounterState()
         {
-            var key = Registry.CurrentUser.CreateSubKey(regKey);
             int value = 0;
-            if (key != null)
-            {
-                var obj = key.GetValue("Counter");
-                if (obj != null)
-                {
-                    int.TryParse(obj.ToString(), out value);
-                }
-            }
-            key.Close();
+            int.TryParse(RegistryReadValue("Counter"), out value);
             return value;
         }
         public int LoadCurrentRoundState()
         {
-            var key = Registry.CurrentUser.CreateSubKey(regKey);
             int value = 0;
-            if (key != null)
-            {
-                var obj = key.GetValue("CurrentRound");
-                if (obj != null)
-                {
-                    int.TryParse(obj.ToString(), out value);
-                }
-            }
-            key.Close();
+            int.TryParse(RegistryReadValue("CurrentRound"), out value);
             return value;
         }
         public DateTime LoadLastActiveTimeState()
         {
-            var key = Registry.CurrentUser.CreateSubKey(regKey);
+            var sValue = RegistryReadValue("LastActiveTime");
             DateTime value = DateTime.Now;
-            if (key != null)
-            {
-                var obj = key.GetValue("LastActiveTime");
-                if (obj != null)
-                {
-                    DateTime.TryParse(obj.ToString(), out value);
-                }
-            }
-            key.Close();
+            DateTime.TryParse(sValue, out value);
             return value;
         }
+
+
 
         #endregion
     }

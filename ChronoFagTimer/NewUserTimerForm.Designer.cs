@@ -76,7 +76,7 @@
             // 
             this.txtHours.Location = new System.Drawing.Point(11, 91);
             this.txtHours.Maximum = new decimal(new int[] {
-            60,
+            999,
             0,
             0,
             0});

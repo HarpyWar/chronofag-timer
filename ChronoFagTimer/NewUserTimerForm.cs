@@ -34,6 +34,9 @@ namespace ChronoFagTimer
             var seconds = txtHours.Value * 60 * 60 + txtMinutes.Value * 60 + txtSeconds.Value;
             var title = txtTitle.Text;
             ((TomatoForm)Owner).AddCustomTimer(title, (int)seconds);
+
+            config.RegistrySaveValue("UserTimerSeconds", seconds.ToString());
+
             this.Close();
         }
 
@@ -44,6 +47,24 @@ namespace ChronoFagTimer
             lblMinutes.Text = config.GetPhrase("timerminutes");
             lblSeconds.Text = config.GetPhrase("timerseconds");
             btnStart.Text = config.GetPhrase("timerstart");
+
+            int seconds = 0, minutes = 0, hours = 0;
+            int.TryParse(config.RegistryReadValue("UserTimerSeconds"), out seconds);
+            if (seconds > 0)
+            {
+                hours = seconds / 60 / 60;
+                minutes = (seconds - hours * 60 * 60) / 60;
+                seconds = seconds - hours * 60 * 60 - minutes * 60;
+            }
+            else
+            {
+                minutes = 5; // default
+            }
+
+
+            txtHours.Text = hours.ToString();
+            txtMinutes.Text = minutes.ToString();
+            txtSeconds.Text = seconds.ToString();
         }
 
         private void txtTitle_KeyDown(object sender, KeyEventArgs e)
