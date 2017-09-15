@@ -4,7 +4,7 @@
 
 This is a productivity timer inspired by a [pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique).
 
-It can help you save lots of time and increase productivity if most of the day you spend at the computer.
+It aims to help you save a time and increase a productivity if most of the day you spend at the computer.
 
 
 By default there is a classical pomodoro time of 25 minutes and break of 5 minutes. After first 4 pomodoros there is a break of 15 minutes and after 8 pomodoros &mdash; a break of 30 minutes (these settings can be changed in `config.hjson`).
