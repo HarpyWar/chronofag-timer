@@ -78,8 +78,9 @@ namespace ChronoFagTimer
             }
             set
             {
-
-                _currentRound = value;
+                _currentRound = value >= 0 
+                    ? value 
+                    : 0;
                 Logger.Debug("Change round to {0} {1} ({2})", _currentRound, CurrentTimeUnit.GetType(), CurrentTimeUnit.Title);
 
 
@@ -479,6 +480,11 @@ namespace ChronoFagTimer
         {
             get
             {
+                if (CurrentRound > config.Times.Count-1 || CurrentRound < 0)
+                {
+                    Logger.Error("Bad current round {0}", CurrentRound);
+                    CurrentRound = 0;
+                }
                 return config.Times[CurrentRound];
             }
         }
@@ -1117,6 +1123,12 @@ namespace ChronoFagTimer
 
             updateTomatoPosition();
             updateElementsPosition();
+        }
+
+        private void btnExtraTime_Click_1(object sender, EventArgs e)
+        {
+            // INFO: do nothing to avoid add extratime by "enter" or "space"
+            //       (click is implemented only by mousedown)
         }
 
         public void RemoveCustomTimer(string key)
