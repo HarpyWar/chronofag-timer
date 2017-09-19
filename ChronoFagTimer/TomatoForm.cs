@@ -1116,10 +1116,10 @@ namespace ChronoFagTimer
         private void btnExtraTime_Click(object sender, EventArgs e)
         {
             ExtraCounter++;
+            getPrevTime(typeof(Pomodoro)).ExtraMode = true;
 
             // return to a pomodoro and set extramode
             CurrentRound--;
-            CurrentTimeUnit.ExtraMode = true;
 
             updateTomatoPosition();
             updateElementsPosition();
